@@ -26,6 +26,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -47,6 +48,7 @@ import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.BuildConfig
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.R
+import org.mozilla.fenix.browser.browsingmode.BrowsingMode
 import org.mozilla.fenix.databinding.FragmentAddOnsManagementBinding
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.requireComponents
@@ -71,6 +73,10 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
     private var adapter: AddonsManagerAdapter? = null
 
     private var addonImportFilePicker: ActivityResultLauncher<Intent>? = null
+
+    private val browsingModeManager by lazy {
+        (activity as HomeActivity).browsingModeManager
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         logger.info("View created for AddonsManagementFragment")
@@ -353,6 +359,15 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
 
     internal fun installAddon(addon: Addon) {
         binding?.addonProgressOverlay?.overlayCardView?.visibility = View.VISIBLE
+
+        if (browsingModeManager.mode == BrowsingMode.Private) {
+            binding?.addonProgressOverlay?.overlayCardView?.setBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.fx_mobile_private_layer_color_3,
+                ),
+            )
+        }
 
         val installOperation = provideAddonManger().installAddon(
             url = addon.downloadUrl,

@@ -45,7 +45,6 @@ import org.mozilla.fenix.components.toolbar.BrowserToolbarView
 import org.mozilla.fenix.components.toolbar.ToolbarMenu
 import org.mozilla.fenix.components.toolbar.navbar.shouldAddNavigationBar
 import org.mozilla.fenix.components.toolbar.ui.createShareBrowserAction
-import org.mozilla.fenix.compose.core.Action
 import org.mozilla.fenix.compose.snackbar.Snackbar
 import org.mozilla.fenix.compose.snackbar.SnackbarState
 import org.mozilla.fenix.ext.components
@@ -754,17 +753,6 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                     snackBarParentView = binding.dynamicSnackbarContainer,
                     snackbarState = SnackbarState(
                         message = getString(messageStringRes),
-                        action = Action(
-                            label = getString(R.string.create_collection_view),
-                            onClick = {
-                                findNavController().navigate(
-                                    BrowserFragmentDirections.actionGlobalHome(
-                                        focusOnAddressBar = false,
-                                        scrollToCollection = true,
-                                    ),
-                                )
-                            },
-                        ),
                     ),
                 ).show()
             }

@@ -33,6 +33,9 @@ import org.mozilla.fenix.components.metrics.MetricsMiddleware
 import org.mozilla.fenix.crashes.CrashReportingAppMiddleware
 import org.mozilla.fenix.crashes.SettingsCrashReportCache
 import org.mozilla.fenix.datastore.pocketStoriesSelectedCategoriesDataStore
+import org.mozilla.fenix.distributions.DefaultDistributionBrowserStoreProvider
+import org.mozilla.fenix.distributions.DefaultDistributionProviderChecker
+import org.mozilla.fenix.distributions.DistributionIdManager
 import org.mozilla.fenix.ext.asRecentTabs
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.filterState
@@ -83,16 +86,16 @@ class Components(private val context: Context) {
     val useCases by lazyMonitored {
         UseCases(
             context,
-            core.engine,
-            core.store,
-            core.webAppShortcutManager,
-            core.topSitesStorage,
-            core.bookmarksStorage,
-            core.historyStorage,
-            backgroundServices.syncedTabsCommands,
-            appStore,
-            core.client,
-            strictMode,
+            lazyMonitored { core.engine },
+            lazyMonitored { core.store },
+            lazyMonitored { core.webAppShortcutManager },
+            lazyMonitored { core.topSitesStorage },
+            lazyMonitored { core.bookmarksStorage },
+            lazyMonitored { core.historyStorage },
+            lazyMonitored { backgroundServices.syncedTabsCommands },
+            lazyMonitored { appStore },
+            lazyMonitored { core.client },
+            lazyMonitored { strictMode },
         )
     }
 
@@ -203,7 +206,7 @@ class Components(private val context: Context) {
             middlewares = listOf(
                 BlocklistMiddleware(blocklistHandler),
                 PocketUpdatesMiddleware(
-                    core.pocketStoriesService,
+                    lazyMonitored { core.pocketStoriesService },
                     context.pocketStoriesSelectedCategoriesDataStore,
                 ),
                 MessagingMiddleware(
@@ -226,6 +229,14 @@ class Components(private val context: Context) {
     }
 
     val fxSuggest by lazyMonitored { FxSuggest(context) }
+
+    val distributionIdManager by lazyMonitored {
+        DistributionIdManager(
+            context = context,
+            browserStoreProvider = DefaultDistributionBrowserStoreProvider(core.store),
+            distributionProviderChecker = DefaultDistributionProviderChecker(context),
+        )
+    }
 }
 
 /**
