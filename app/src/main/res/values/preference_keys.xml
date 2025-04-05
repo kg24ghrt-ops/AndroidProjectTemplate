@@ -418,13 +418,13 @@
     <string name="pref_key_is_notification_pre_permission_prompt_shown">pref_key_is_notification_pre_permission_prompt_shown</string>
 
     <string name="pref_key_strip_url" translatable="false">pref_key_strip_url</string>
-    <string name="pref_key_show_displayname_insteadof_email" translatable="false">pref_key_show_displayname_insteadof_email</string>
+    <string name="pref_key_show_display_name_insteadof_email" translatable="false">pref_key_show_display_name_insteadof_email</string>
     <!-- Add-ons Source Customization Settings -->
-    <string name="pref_addons_settings_category" translatable="false">pref_addons_settings_category</string>
+    <string name="pref_key_addons_settings_category" translatable="false">pref_key_addons_settings_category</string>
     <string name="pref_key_addons_custom_account" translatable="false">pref_key_addons_custom_account</string>
     <string name="pref_key_addons_custom_collection" translatable="false">pref_key_addons_custom_collection</string>
     <!-- System Customization Settings -->
-    <string name="pref_system_behavior_settings_category" translatable="false">pref_system_behavior_settings_category</string>
+    <string name="pref_key_system_behavior_settings_category" translatable="false">pref_key_system_behavior_settings_category</string>
     <string name="pref_key_relinquish_memory_under_pressure" translatable="false">pref_key_relinquish_memory_under_pressure</string>
     <!-- shortcut settings -->
     <string name="pref_key_show_top_recent_sites" translatable="false">pref_key_show_top_recent_sites</string>
@@ -434,6 +434,9 @@
     <string name="pref_key_success_download_dialog" translatable="false">pref_key_success_download_dialog</string>
     <string name="pref_key_show_qr_scan_search" translatable="false">pref_key_show_qr_scan_search</string>
     <string name="pref_key_show_reader_mode_btn" translatable="false">pref_key_show_reader_mode_btn</string>
+    <!-- notification settings -->
+    <string name="pref_key_show_fullscreen_toast" translatable="false">pref_key_show_fullscreen_toast</string>
+    <string name="pref_key_other_customization_category" translatable="false">pref_key_other_customization_category</string>
 
     <!--Translations -->
     <string name="pref_key_ignore_translations_data_saver_warning" translatable="false">pref_key_ignore_translations_data_saver_warning</string>

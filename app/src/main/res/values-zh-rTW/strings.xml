@@ -5,7 +5,7 @@
   <!-- Placeholder text shown in the search bar before a user enters text -->
   <string name="addons_search_hint">搜尋元件</string>
   <!-- Preference for showing display name instead of email -->
-  <string name="preferences_show_displayname_insteadof_email">展示顯示名而不是郵件地址</string>
+  <string name="preferences_show_display_name_insteadof_email">在工具欄展示顯示名而不是郵件地址</string>
   <!-- Title for strip url preference in customization settings -->
   <string name="preferences_strip_url_title">隱藏 URL 中的 HTTP/HTTPS/WWW 字元</string>
   <!-- Description for strip url preference in customization settings -->
@@ -36,6 +36,8 @@
   <string name="preferences_show_success_download_dialog">完成時的對話方塊</string>
   <string name="preferences_show_qr_scan_search">顯示 QR 掃描搜尋</string>
   <string name="preferences_show_reader_mode_btn">顯示閱讀畫面按鈕</string>
+  <string name="preferences_other_customization">其他</string>
+  <string name="preferences_show_fullscreen_toast">全屏後的提示框</string>
 
 
   <!-- App name for private browsing mode. %s is the name of the app (for example "Firefox"). -->

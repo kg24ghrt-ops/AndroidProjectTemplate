@@ -76,17 +76,7 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         setupDownloadCustomizationCategory()
         setupAddonsCustomizationCategory()
         setupSystemBehaviorCategory()
-        requirePreference<SwitchPreference>(R.string.pref_key_strip_url).apply {
-            isChecked = requireContext().settings().shouldStripUrl
-
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
-
-        requirePreference<SwitchPreference>(R.string.pref_key_show_displayname_insteadof_email).apply {
-            isChecked = requireContext().settings().showDisplayNameInsteadofEmail
-
-            onPreferenceChangeListener = SharedPreferenceUpdater()
-        }
+        setupOtherCustomizationCategory()
     }
 
     // Changes to some settings page copy for when the Toolbar(NavBar) is enabled
@@ -177,6 +167,12 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         bottomPreference.setCheckedWithoutClickListener(toolbarPosition == ToolbarPosition.BOTTOM)
 
         addToRadioGroup(topPreference, bottomPreference)
+
+        requirePreference<SwitchPreference>(R.string.pref_key_strip_url).apply {
+            isChecked = requireContext().settings().shouldStripUrl
+
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
     }
 
     private fun setupGesturesCategory(isSwipeToolbarToSwitchTabsVisible: Boolean) {
@@ -218,6 +214,20 @@ class CustomizationFragment : PreferenceFragmentCompat() {
     private fun setupDownloadCustomizationCategory() {
         requirePreference<SwitchPreference>(R.string.pref_key_success_download_dialog).apply {
             isChecked = requireContext().settings().shouldShowSuccessDownloadDialog
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+    }
+
+    private fun setupOtherCustomizationCategory() {
+        requirePreference<SwitchPreference>(R.string.pref_key_show_display_name_insteadof_email).apply {
+            isChecked = requireContext().settings().showDisplayNameInsteadOfEmail
+
+            onPreferenceChangeListener = SharedPreferenceUpdater()
+        }
+
+
+        requirePreference<SwitchPreference>(R.string.pref_key_show_fullscreen_toast).apply {
+            isChecked = requireContext().settings().shouldShowFullScreenToast
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
     }

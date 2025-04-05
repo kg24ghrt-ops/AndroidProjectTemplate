@@ -5,7 +5,7 @@
   <!-- Placeholder text shown in the search bar before a user enters text -->
   <string name="addons_search_hint">Поиск дополнений</string>
   <!-- Preference for showing display name instead of email -->
-  <string name="preferences_show_displayname_insteadof_email">Показывать отображаемое имя вместо электронной почты</string>
+  <string name="preferences_show_display_name_insteadof_email">Показывать отображаемое имя вместо адреса электронной почты на панели инструментов</string>
   <!-- Title for strip url preference in customization settings -->
   <string name="preferences_strip_url_title">Удалить HTTP/HTTPS/WWW из URL-адресов</string>
   <!-- Description for strip url preference in customization settings -->

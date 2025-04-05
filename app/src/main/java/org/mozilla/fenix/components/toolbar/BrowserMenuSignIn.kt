@@ -60,7 +60,7 @@ class BrowserMenuSignIn(
         val displayName = components.backgroundServices.syncStore.state.account?.displayName
 
         if (isSignedIn) {
-            if (context.settings().showDisplayNameInsteadofEmail) {
+            if (context.settings().showDisplayNameInsteadOfEmail) {
                 displayName ?: resources.getString(R.string.browser_menu_account_settings)
             } else {
                 email ?: resources.getString(R.string.browser_menu_account_settings)

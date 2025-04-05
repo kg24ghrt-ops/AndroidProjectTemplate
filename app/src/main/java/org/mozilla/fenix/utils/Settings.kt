@@ -1007,13 +1007,18 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
-    var showDisplayNameInsteadofEmail by booleanPreference(
-        appContext.getPreferenceKey(R.string.pref_key_show_displayname_insteadof_email),
+    var showDisplayNameInsteadOfEmail by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_display_name_insteadof_email),
         default = true,
     )
 
     var shouldRelinquishMemoryUnderPressure by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_relinquish_memory_under_pressure),
+        default = true,
+    )
+
+    var shouldShowFullScreenToast by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_show_fullscreen_toast),
         default = true,
     )
 

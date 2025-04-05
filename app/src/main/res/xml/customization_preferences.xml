@@ -48,10 +48,6 @@
             android:key="@string/pref_key_strip_url"
             android:summary="@string/preferences_strip_url_description"
             android:title="@string/preferences_strip_url_title" />
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="@string/pref_key_show_displayname_insteadof_email"
-            android:title="@string/preferences_show_displayname_insteadof_email" />
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
@@ -84,7 +80,7 @@
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
-        android:key="@string/pref_addons_settings_category"
+        android:key="@string/pref_key_addons_settings_category"
         android:layout="@layout/preference_cat_style"
         android:title="@string/preferences_addons_customization"
         app:allowDividerAbove="true"
@@ -98,7 +94,7 @@
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
-        android:key="@string/pref_system_behavior_settings_category"
+        android:key="@string/pref_key_system_behavior_settings_category"
         android:layout="@layout/preference_cat_style"
         android:title="@string/preferences_system_behavior"
         app:allowDividerAbove="true"
@@ -108,5 +104,21 @@
             android:key="@string/pref_key_relinquish_memory_under_pressure"
             android:summary="@string/preferences_relinquish_memory_description"
             android:title="@string/preferences_relinquish_memory_title" />
+    </androidx.preference.PreferenceCategory>
+
+    <androidx.preference.PreferenceCategory
+        android:key="@string/pref_key_other_customization_category"
+        android:layout="@layout/preference_cat_style"
+        android:title="@string/preferences_other_customization"
+        app:allowDividerAbove="true"
+        app:iconSpaceReserved="false"
+        >
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key_show_display_name_insteadof_email"
+            android:title="@string/preferences_show_display_name_insteadof_email" />
+        <SwitchPreference
+            android:key="@string/pref_key_show_fullscreen_toast"
+            android:title="@string/preferences_show_fullscreen_toast" />
     </androidx.preference.PreferenceCategory>
 </androidx.preference.PreferenceScreen>
