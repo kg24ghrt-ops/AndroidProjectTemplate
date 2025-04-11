@@ -1037,6 +1037,16 @@ class Settings(private val appContext: Context) : PreferencesHolder {
         default = true,
     )
 
+    var shouldUseDefaultHomepage by booleanPreference(
+        appContext.getPreferenceKey(R.string.pref_key_default_homepage),
+        default = true,
+    )
+
+    var customHomepageUrl by stringPreference(
+        appContext.getPreferenceKey(R.string.pref_key_custom_homepage_url),
+        default = "https://duckduckgo.com",
+    )
+
     /**
      * Check each active accessibility service to see if it can perform gestures, if any can,
      * then it is *likely* a switch service is enabled. We are assuming this to be the case based on #7486
