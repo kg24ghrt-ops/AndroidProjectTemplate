@@ -68,21 +68,21 @@ class HomeSettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
-        requirePreference<CheckBoxPreference>(R.string.pref_key_enable_contile).apply {
-            isChecked = context.settings().showContileFeature
-            onPreferenceChangeListener = object : SharedPreferenceUpdater() {
-                override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
-                    CustomizeHome.preferenceToggled.record(
-                        CustomizeHome.PreferenceToggledExtra(
-                            newValue as Boolean,
-                            "contile",
-                        ),
-                    )
-
-                    return super.onPreferenceChange(preference, newValue)
-                }
-            }
-        }
+//        requirePreference<CheckBoxPreference>(R.string.pref_key_enable_contile).apply {
+//            isChecked = context.settings().showContileFeature
+//            onPreferenceChangeListener = object : SharedPreferenceUpdater() {
+//                override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+//                    CustomizeHome.preferenceToggled.record(
+//                        CustomizeHome.PreferenceToggledExtra(
+//                            newValue as Boolean,
+//                            "contile",
+//                        ),
+//                    )
+//
+//                    return super.onPreferenceChange(preference, newValue)
+//                }
+//            }
+//        }
 
         requirePreference<SwitchPreference>(R.string.pref_key_recent_tabs).apply {
             isChecked = context.settings().showRecentTabsFeature
@@ -137,46 +137,46 @@ class HomeSettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
-        requirePreference<CheckBoxPreference>(R.string.pref_key_pocket_sponsored_stories).apply {
-            isVisible = FeatureFlags.isPocketSponsoredStoriesFeatureEnabled(context)
-            isChecked = context.settings().showPocketSponsoredStories
-            onPreferenceChangeListener = object : SharedPreferenceUpdater() {
-                override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
-                    when (newValue) {
-                        true -> {
-                            if (context.settings().marsAPIEnabled) {
-                                context.components.core.pocketStoriesService.startPeriodicSponsoredContentsRefresh()
-                            } else {
-                                context.components.core.pocketStoriesService.startPeriodicSponsoredStoriesRefresh()
-                            }
-                        }
-                        false -> {
-                            if (context.settings().marsAPIEnabled) {
-                                context.components.core.pocketStoriesService.deleteUser()
-
-                                context.components.appStore.dispatch(
-                                    ContentRecommendationsAction.SponsoredContentsChange(
-                                        sponsoredContents = emptyList(),
-                                        showContentRecommendations = context.settings().showContentRecommendations,
-                                    ),
-                                )
-                            } else {
-                                context.components.core.pocketStoriesService.deleteProfile()
-
-                                context.components.appStore.dispatch(
-                                    ContentRecommendationsAction.PocketSponsoredStoriesChange(
-                                        sponsoredStories = emptyList(),
-                                        showContentRecommendations = context.settings().showContentRecommendations,
-                                    ),
-                                )
-                            }
-                        }
-                    }
-
-                    return super.onPreferenceChange(preference, newValue)
-                }
-            }
-        }
+//        requirePreference<CheckBoxPreference>(R.string.pref_key_pocket_sponsored_stories).apply {
+//            isVisible = FeatureFlags.isPocketSponsoredStoriesFeatureEnabled(context)
+//            isChecked = context.settings().showPocketSponsoredStories
+//            onPreferenceChangeListener = object : SharedPreferenceUpdater() {
+//                override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
+//                    when (newValue) {
+//                        true -> {
+//                            if (context.settings().marsAPIEnabled) {
+//                                context.components.core.pocketStoriesService.startPeriodicSponsoredContentsRefresh()
+//                            } else {
+//                                context.components.core.pocketStoriesService.startPeriodicSponsoredStoriesRefresh()
+//                            }
+//                        }
+//                        false -> {
+//                            if (context.settings().marsAPIEnabled) {
+//                                context.components.core.pocketStoriesService.deleteUser()
+//
+//                                context.components.appStore.dispatch(
+//                                    ContentRecommendationsAction.SponsoredContentsChange(
+//                                        sponsoredContents = emptyList(),
+//                                        showContentRecommendations = context.settings().showContentRecommendations,
+//                                    ),
+//                                )
+//                            } else {
+//                                context.components.core.pocketStoriesService.deleteProfile()
+//
+//                                context.components.appStore.dispatch(
+//                                    ContentRecommendationsAction.PocketSponsoredStoriesChange(
+//                                        sponsoredStories = emptyList(),
+//                                        showContentRecommendations = context.settings().showContentRecommendations,
+//                                    ),
+//                                )
+//                            }
+//                        }
+//                    }
+//
+//                    return super.onPreferenceChange(preference, newValue)
+//                }
+//            }
+//        }
 
         requirePreference<SwitchPreference>(R.string.pref_key_history_metadata_feature).apply {
             isChecked = context.settings().historyMetadataUIFeature

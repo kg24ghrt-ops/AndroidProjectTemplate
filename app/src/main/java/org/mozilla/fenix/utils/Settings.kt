@@ -1719,7 +1719,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     val showPocketSponsoredStories by lazyFeatureFlagPreference(
         key = appContext.getPreferenceKey(R.string.pref_key_pocket_sponsored_stories),
-        default = { homescreenSections[HomeScreenSection.POCKET_SPONSORED_STORIES] == true },
+        default = { false },
         featureFlag = FeatureFlags.isPocketSponsoredStoriesFeatureEnabled(appContext),
     )
 
