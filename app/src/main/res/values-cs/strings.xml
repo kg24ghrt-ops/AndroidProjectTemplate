@@ -3406,10 +3406,6 @@
     The title of the glean debugging feature
   -->
   <string name="glean_debug_tools_title">Nástroje ladění Glean</string>
-  <!-- The text label for displaying home region. -->
-  <string name="debug_drawer_home_region_label">Domovský region</string>
-  <!-- The text label for displaying current region. -->
-  <string name="debug_drawer_current_region_label">Aktuální region</string>
   <!--
     Debug drawer region tools
 

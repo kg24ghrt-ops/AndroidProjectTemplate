@@ -1531,40 +1531,6 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
   <string name="download_time_period_last_30_days">30 n wussan ineggura</string>
   <!-- Text for the header that groups the downloads older than other groups -->
   <string name="download_time_period_older">Iqbuṛen</string>
-  <!-- Text to indicate that an in progress download is paused. -->
-  <string name="download_item_status_paused" tools:ignore="UnusedResources">isteɛfa</string>
-  <!-- Text to indicate that the download speed of an in progress download is being calculated. -->
-  <string name="download_item_download_speed_pending" tools:ignore="UnusedResources">ittraju</string>
-  <!-- Text to indicate that a download has failed to download. -->
-  <string name="download_item_status_failed" tools:ignore="UnusedResources">Ifuyla ittwazedmen</string>
-  <!-- Placeholder text to indicate that users can use the search bar to search for a download. -->
-  <string name="download_search_placeholder" tools:ignore="UnusedResources">Nadi isadaren</string>
-  <!-- Text to indicate that no downloads match the search query. -->
-  <string name="download_search_no_results_found" tools:ignore="UnusedResources">Ulac igmad yettwafen</string>
-  <!-- Text for the "Select all" button, which selects all downloaded items in the downloads list. -->
-  <string name="download_select_all_items">Fren akk</string>
-  <!--
-    Downloads Content Type Filters
-
-    Text for the filter button to show all files in the downloads list
-  -->
-  <string name="download_content_type_filter_all">Akk</string>
-  <!-- Text for the filter button to show only images in the downloads list -->
-  <string name="download_content_type_filter_image">Tugniwin</string>
-  <!-- Text for the filter button to show only video files in the downloads list -->
-  <string name="download_content_type_filter_video">Tividyutin</string>
-  <!-- Text for the filter button to show only documents in the downloads list -->
-  <string name="download_content_type_filter_document">Isemliyen</string>
-  <!-- Text for the filter button to show all other file types in the downloads list -->
-  <string name="download_content_type_filter_other" moz:removedIn="138" tools:ignore="UnusedResources">Wiyaḍ</string>
-  <!-- Text for the filter button to show all other file types in the downloads list -->
-  <string name="download_content_type_filter_other_1">Wiyaḍ</string>
-  <!--
-    Description of a downloaded item, displayed in the downloads list.
-    %1$s: The size of the downloaded file.
-    %2$s: The URL of the downloaded file.
-  -->
-  <string name="download_item_description" moz:removedIn="138" tools:ignore="UnusedResources">%1$s • %2$s</string>
   <!--
     Description of an in progress download item, displayed in the downloads list.
     %1$s is the current file size that has been downloaded.
@@ -3220,31 +3186,6 @@ Tiktiwin tigejdanin yuzzlen ur nṣeḥḥi ara
   <string name="protection_panel_etp_toggle_enabled_description">Ma yella wayen ur nteddu ara ɣef usmel-a, εreḍ ad tsenseḍ ammesten.</string>
   <!-- Description text for the Enhanced Tracking Protection toggle when tracking protection is disabled. -->
   <string name="protection_panel_etp_toggle_disabled_description">Ammesten yensa. Ad nsumer ad t-tremdeḍ.</string>
-  <!-- Text for when no trackers have been blocked. -->
-  <string name="protection_panel_no_trackers_blocked">Ulac ineḍfaren i yettwafen</string>
-  <!-- Link text to navigate to privacy and security settings from the protection panel. -->
-  <string name="protection_panel_privacy_and_security_settings">Iɣewwaren n tbaḍnit d tɣellist</string>
-  <!--
-    Text for displaying the number of trackers blocked for a specific tracker category in the trackers blocked panel.
-    %s is a placeholder for the name of the tracker category.
-    %d is a placeholder for the number of trackers blocked.
-  -->
-  <string name="trackers_blocked_panel_categorical_num_trackers_blocked">%s: %d</string>
-  <!-- Button text on the clear site data dialog to allow users to confirm they wish to clear the site data. -->
-  <string name="clear_site_data_dialog_positive_button_text">Sfeḍ</string>
-  <!-- Button text on the clear site data dialog to allow users to cancel the action and not clear the site data. -->
-  <string name="clear_site_data_dialog_negative_button_text">Sefsex</string>
-  <!-- Snackbar title shown when the site data has been cleared. -->
-  <string name="clear_site_data_snackbar">Inagan n tuqqna d yisefka n usmel yettwakkes</string>
-  <!-- Text for the connection security panel when the site is secure. -->
-  <string name="connection_security_panel_secure">Tuqqna taɣelsant</string>
-  <!-- Text for the connection security panel when the site is not secure. -->
-  <string name="connection_security_panel_not_secure">Tuqqna taraɣelsant</string>
-  <!--
-    Text for the connection security panel to indicate who the certificate was verified by.
-    %s is a placeholder for the name of the certificate authority that verified the ticket
-  -->
-  <string name="connection_security_panel_verified_by">Yettwasenqed sɣur %s</string>
   <!--
     Text for displaying the total number of trackers blocked in the protection panel.
     %d is a placeholder for the number of trackers blocked.
