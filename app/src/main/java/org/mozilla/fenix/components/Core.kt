@@ -685,9 +685,11 @@ class Core(
 
         val updateChannel = when (Config.channel) {
             ReleaseChannel.Debug -> SearchUpdateChannel.DEFAULT
+            ReleaseChannel.ForkDebug -> SearchUpdateChannel.DEFAULT
             ReleaseChannel.Nightly -> SearchUpdateChannel.NIGHTLY
             ReleaseChannel.Beta -> SearchUpdateChannel.BETA
             ReleaseChannel.Release -> SearchUpdateChannel.RELEASE
+            ReleaseChannel.ForkRelease -> SearchUpdateChannel.RELEASE
         }
 
         val deviceType = if (context.isLargeWindow()) {
