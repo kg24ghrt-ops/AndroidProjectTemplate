@@ -380,7 +380,7 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         leadingAction = null
 
         // set paddingStart when no leading action button (especially HomeButton)
-        (_browserToolbarView as? BrowserToolbarView)!!.view.setPadding(8.dpToPx(resources.displayMetrics), 0, 0, 0)
+        (_browserToolbarView as? BrowserToolbarView)?.toolbar?.setPadding(8.dpToPx(resources.displayMetrics), 0, 0, 0)
     }
 
     /**
