@@ -63,7 +63,7 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
         }
 
         requirePreference<SwitchPreference>(R.string.pref_key_toolbar_show_navigation_toolbar).apply {
-            isVisible = Config.channel.isNightlyOrDebug
+            isVisible = Config.channel.isNightlyOrDebug || Config.channel.isFork
             isChecked = context.settings().navigationToolbarEnabled
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
