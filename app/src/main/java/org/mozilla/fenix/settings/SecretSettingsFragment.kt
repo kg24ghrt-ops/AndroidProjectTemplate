@@ -69,7 +69,7 @@ class SecretSettingsFragment : PreferenceFragmentCompat() {
         }
 
         requirePreference<SwitchPreference>(R.string.pref_key_enable_composable_toolbar).apply {
-            isVisible = Config.channel.isDebug
+            isVisible = Config.channel.isDebug || Config.channel.isFork
             isChecked = context.settings().shouldUseComposableToolbar
             onPreferenceChangeListener = SharedPreferenceUpdater()
         }
