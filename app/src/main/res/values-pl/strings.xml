@@ -3504,22 +3504,6 @@
   <!-- Subtitle for a setup checklist with 5 steps completed state. %1$s is the name of the app (for example "Firefox"). -->
   <string name="setup_checklist_subtitle_5_steps_completed_state">Ukończono wszystkie pięć kroków konfiguracji. Ciesz się szybkością, prywatnością i bezpieczeństwem przeglądarki %1$s.</string>
   <!--
-    ===== Setup checklist feature: Subtitles for 5 steps (Large screen devices don't support toolbar placement) =====
-
-    Subtitle for a setup checklist with 5 steps initial state. %1$s is the name of the app (for example "Firefox").
-  -->
-  <string name="setup_checklist_subtitle_5_steps_initial_state">Wykonaj wszystkie pięć kroków, aby skonfigurować przeglądarkę %1$s i przeglądać Internet jak najwygodniej.</string>
-  <!-- Subtitle for a setup checklist with 5 steps when the first task is completed. -->
-  <string name="setup_checklist_subtitle_5_steps_first_step">Dobry początek! Ukończono 1 z 5 kroków.</string>
-  <!-- Subtitle for the setup checklist when the second task is completed. -->
-  <string name="setup_checklist_subtitle_5_steps_second_step">Ukończono 2 z 5 kroków. Świetny postęp!</string>
-  <!-- Subtitle for a setup checklist with 5 steps when three of the tasks are completed. -->
-  <string name="setup_checklist_subtitle_5_steps_third_step">Jesteś w połowie drogi! Ukończono trzy kroki, zostały jeszcze dwa.</string>
-  <!-- Subtitle for a setup checklist with 5 steps when the fifth task is completed. -->
-  <string name="setup_checklist_subtitle_5_steps_fourth_step">Prawie gotowe! Od mety dzieli Cię tylko jeden krok.</string>
-  <!-- Subtitle for a setup checklist with 5 steps completed state. %1$s is the name of the app (for example "Firefox"). -->
-  <string name="setup_checklist_subtitle_5_steps_completed_state">Ukończono wszystkie pięć kroków konfiguracji. Ciesz się szybkością, prywatnością i bezpieczeństwem przeglądarki %1$s.</string>
-  <!--
     ===== Setup checklist feature: Task titles =====
 
     The title of the default browser task for the setup checklist
