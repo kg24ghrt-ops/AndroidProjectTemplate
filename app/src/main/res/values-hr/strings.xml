@@ -3670,24 +3670,6 @@
   <!-- Title for the setup checklist feature when the state is 'completed' -->
   <string name="setup_checklist_title_state_completed">Čestitamo!</string>
   <!--
-    TextField Design System Component
-
-    The default content description for the eye trailing icon button in TextField
-  -->
-  <string name="text_field_eye_trailing_icon_default_content_description" moz:removedIn="139" tools:ignore="UnusedResources">Prikaži skriveni tekst</string>
-  <!-- The default content description for the cross trailing icon button in TextField -->
-  <string name="text_field_cross_trailing_icon_default_content_description" moz:removedIn="139" tools:ignore="UnusedResources">Izbriši tekst</string>
-  <!--
-    Setup checklist feature
-
-    ===== Setup checklist feature: Title =====
-
-    Title for the setup checklist feature when the state is 'incomplete'. %1$s is the name of the app (for example "Firefox").
-  -->
-  <string name="setup_checklist_title_state_incomplete">Završi postavljanje aplikacije %1$s</string>
-  <!-- Title for the setup checklist feature when the state is 'completed' -->
-  <string name="setup_checklist_title_state_completed">Čestitamo!</string>
-  <!--
     ===== Setup checklist feature: Subtitles for 3 steps =====
 
     Subtitle for a setup checklist with 3 steps initial step. %1$s is the name of the app (for example "Firefox").
