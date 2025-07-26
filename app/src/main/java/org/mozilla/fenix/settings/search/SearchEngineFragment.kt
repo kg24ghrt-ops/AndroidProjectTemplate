@@ -132,11 +132,6 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
                 isChecked = context.settings().shouldShowClipboardSuggestions
             }
 
-        val showVoiceSearchPreference =
-            requirePreference<SwitchPreference>(R.string.pref_key_show_voice_search).apply {
-                isChecked = context.settings().shouldShowVoiceSearch
-            }
-
         val showReaderModeBtnPreference =
             requirePreference<SwitchPreference>(R.string.pref_key_show_reader_mode_btn).apply {
                 isChecked = context.settings().shouldShowReaderModeBtn
@@ -180,16 +175,6 @@ class SearchEngineFragment : PreferenceFragmentCompat() {
         searchSuggestionsInPrivatePreference.onPreferenceChangeListener = SharedPreferenceUpdater()
         trendingSearchSuggestionsPreference.onPreferenceChangeListener = SharedPreferenceUpdater()
         recentSearchSuggestionsPreference.onPreferenceChangeListener = SharedPreferenceUpdater()
-        showVoiceSearchPreference.onPreferenceChangeListener = object : Preference.OnPreferenceChangeListener {
-            override fun onPreferenceChange(preference: Preference, newValue: Any?): Boolean {
-                val newBooleanValue = newValue as? Boolean ?: return false
-                requireContext().settings().preferences.edit {
-                    putBoolean(preference.key, newBooleanValue)
-                }
-                SearchWidgetProvider.updateAllWidgets(requireContext())
-                return true
-            }
-        }
         showReaderModeBtnPreference.onPreferenceChangeListener = SharedPreferenceUpdater()
         showQRScanSearchPreference.onPreferenceChangeListener = SharedPreferenceUpdater()
         showHomeButtonPreference.onPreferenceChangeListener = SharedPreferenceUpdater()

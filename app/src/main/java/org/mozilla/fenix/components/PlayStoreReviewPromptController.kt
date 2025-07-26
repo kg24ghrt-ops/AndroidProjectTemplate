@@ -6,7 +6,6 @@ package org.mozilla.fenix.components
 
 import android.app.Activity
 import androidx.annotation.VisibleForTesting
-import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

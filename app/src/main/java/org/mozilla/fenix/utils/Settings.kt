@@ -1793,7 +1793,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
      */
     var showPocketRecommendationsFeature by lazyFeatureFlagPreference(
         appContext.getPreferenceKey(R.string.pref_key_pocket_homescreen_recommendations),
-        featureFlag = ContentRecommendationsFeatureHelper.isPocketRecommendationsFeatureEnabled(appContext),
+        featureFlag = ContentRecommendationsFeatureHelper.isContentRecommendationsFeatureEnabled(appContext),
         default = { false },
     )
 

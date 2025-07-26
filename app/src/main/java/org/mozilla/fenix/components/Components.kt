@@ -9,6 +9,7 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import com.google.android.play.core.review.ReviewManagerFactory
 import io.github.forkmaintainers.iceraven.components.PagedAMOAddonsProvider
 import androidx.core.app.NotificationManagerCompat
 import mozilla.components.feature.addons.AddonManager
