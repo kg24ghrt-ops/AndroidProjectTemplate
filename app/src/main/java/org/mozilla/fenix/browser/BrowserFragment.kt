@@ -30,6 +30,7 @@ import mozilla.components.feature.tab.collections.TabCollection
 import mozilla.components.feature.tabs.WindowFeature
 import mozilla.components.support.base.feature.UserInteractionHandler
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
+import mozilla.components.support.ktx.android.util.dpToPx
 import mozilla.components.support.ktx.kotlin.isContentUrl
 import mozilla.telemetry.glean.private.NoExtras
 import org.mozilla.fenix.GleanMetrics.AddressToolbar
@@ -352,7 +353,11 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
         context: Context,
         isTablet: Boolean,
     ) {
-        addHomeAction(context = context)
+        if (context.settings().shouldShowHomeButton) {
+            addHomeAction(context = context)
+        } else {
+            (_browserToolbarView as? BrowserToolbarView)?.toolbar?.setPadding(8.dpToPx(resources.displayMetrics), 0, 0, 0)
+        }
         updateTabletToolbarActions(isTablet = isTablet)
         (browserToolbarView as? BrowserToolbarView)?.toolbar?.invalidateActions()
     }
