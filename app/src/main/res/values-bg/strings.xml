@@ -1674,11 +1674,6 @@
   -->
   <string name="download_item_in_progress_description_unknown_total_size">%1$s • неизвестно време</string>
   <!--
-    Description of an in progress download item, displayed in the downloads list when the total download size is unknown. This results in the estimated download time remaining to be unknown also.
-    %1$s is the current file size that has been downloaded.
-  -->
-  <string name="download_item_in_progress_description_unknown_total_size">%1$s • неизвестно време</string>
-  <!--
     Description of a paused download item, displayed in the downloads list.
     %1$s is the current file size that has been downloaded.
     %2$s is the total size of the downloaded file.

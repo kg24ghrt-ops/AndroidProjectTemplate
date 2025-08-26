@@ -3048,8 +3048,6 @@
   -->
   <string name="pocket_stories_header_2">Articuli</string>
   <!-- Header text for a section on the home screen. -->
-  <string name="pocket_stories_header_2">Articuli</string>
-  <!-- Header text for a section on the home screen. -->
   <string name="pocket_stories_categories_header" moz:removedIn="141" tools:ignore="UnusedResources">Storie da l’articulu</string>
   <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
   <string name="pocket_stories_placeholder_text" moz:removedIn="141" tools:ignore="UnusedResources">Scoprene di più</string>

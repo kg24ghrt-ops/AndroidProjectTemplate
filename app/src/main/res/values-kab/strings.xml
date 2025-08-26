@@ -2994,8 +2994,6 @@
   -->
   <string name="pocket_stories_header_2">Imagraden</string>
   <!-- Header text for a section on the home screen. -->
-  <string name="pocket_stories_header_2">Imagraden</string>
-  <!-- Header text for a section on the home screen. -->
   <string name="pocket_stories_categories_header" moz:removedIn="141" tools:ignore="UnusedResources">Smizzwer s usentel</string>
   <!-- Text of a button allowing users to access an external url for more Pocket recommendations. -->
   <string name="pocket_stories_placeholder_text" moz:removedIn="141" tools:ignore="UnusedResources">Issin ugar</string>
