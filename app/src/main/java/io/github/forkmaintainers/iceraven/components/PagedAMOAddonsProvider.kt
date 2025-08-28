@@ -33,6 +33,7 @@ import org.mozilla.fenix.Config
 import org.mozilla.fenix.ext.settings
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.ConcurrentHashMap
@@ -170,7 +171,7 @@ class PagedAMOAddonsProvider(
         } else {
             ""
         }
-        url = listOf(
+        var url = listOf(
             serverURL,
             API_VERSION,
             "accounts/account",
