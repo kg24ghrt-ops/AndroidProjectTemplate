@@ -119,6 +119,8 @@ class PagedAMOAddonsProvider(
             null
         }
 
+        val collectionAccount = getCollectionAccount()
+        val collectionName = getCollectionName()
         if (cachedFeaturedAddons != null) {
             logger.info("Providing cached list of addons for $collectionAccount collection $collectionName")
             return@withContext cachedFeaturedAddons
