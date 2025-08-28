@@ -118,8 +118,6 @@ class PagedAMOAddonsProvider(
         } else {
             null
         }
-        val collectionAccount = getCollectionAccount()
-        val collectionName = getCollectionName()
 
         if (cachedFeaturedAddons != null) {
             logger.info("Providing cached list of addons for $collectionAccount collection $collectionName")
@@ -171,6 +169,8 @@ class PagedAMOAddonsProvider(
         } else {
             ""
         }
+        val collectionAccount = getCollectionAccount()
+        val collectionName = getCollectionName()
         var url = listOf(
             serverURL,
             API_VERSION,
@@ -179,7 +179,7 @@ class PagedAMOAddonsProvider(
             "collections",
             collectionName,
             "addons",
-            "?sort=${sortOption.value}"
+            "?sort=${sortOption.value}",
             langParam,
         ).joinToString("/")
         // Fetch and compile all the pages into one object we can return
