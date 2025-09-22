@@ -18,8 +18,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
+import androidx.fragment.compose.content
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
@@ -146,14 +146,27 @@ class OnboardingFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View = ComposeView(requireContext()).apply {
-        setContent {
-            FirefoxTheme {
-                ScreenContent()
-            }
+    ) = content {
+        FirefoxTheme {
+            ScreenContent()
         }
 
         requireContext().settings().promptToSetAsDefaultBrowserDisplayedInOnboarding = false
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        removeMarketingFeature.set(
+            feature = MarketingPageRemovalSupport(
+                prefKey = requireContext().getString(R.string.pref_key_should_show_marketing_onboarding),
+                pagesToDisplay = pagesToDisplay,
+                distributionIdManager = requireComponents.distributionIdManager,
+                settings = requireContext().settings(),
+                lifecycleOwner = viewLifecycleOwner,
+            ),
+            owner = this,
+            view = view,
+        )
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
