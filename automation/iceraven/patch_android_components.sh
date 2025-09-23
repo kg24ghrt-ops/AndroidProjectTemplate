@@ -19,4 +19,4 @@ sed -i 's#mobile/android/version.txt#version.txt#g' android-components/plugins/c
 git -C android-components apply < automation/iceraven/patches/top_sites_no_most_visted_sites.patch
 git -C android-components apply < automation/iceraven/patches/toolbar.patch
 
-python ./toolkit/crashreporter/generate_crash_reporter_sources.py
+python automation/iceraven/toolkit/crashreporter/generate_crash_reporter_sources.py
