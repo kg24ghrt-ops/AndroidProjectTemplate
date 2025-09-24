@@ -171,7 +171,7 @@ object MetricsUtils {
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal fun getAdvertisingID(retrieveAdvertisingIdInfo: () -> String?): String? {
         return try {
-            AdvertisingIdClient.getAdvertisingIdInfo(context).id
+            retrieveAdvertisingIdInfo()
         } catch (e: IllegalStateException) {
             // This is unlikely to happen, as this should be running off the main thread.
             Logger.debug("getAdvertisingID() - AdvertisingIdClient must be called off the main thread")
