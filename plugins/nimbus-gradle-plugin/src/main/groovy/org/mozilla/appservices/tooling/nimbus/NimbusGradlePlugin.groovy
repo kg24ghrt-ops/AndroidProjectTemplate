@@ -247,7 +247,7 @@ class NimbusPlugin implements Plugin<Project> {
         }
         // This in particular is, um, sad. Extract from a generated .kt
         def topsrcdir = project.gradle.mozconfig.topsrcdir
-        def appServicesFile = new File(topsrcdir, "mobile/android/android-components/plugins/dependencies/src/main/java/ApplicationServices.kt")
+        def appServicesFile = new File(topsrcdir, "/android-components/plugins/dependencies/src/main/java/ApplicationServices.kt")
         def versionLine = appServicesFile.readLines().find { it.startsWith("val VERSION = ") }
         if (versionLine) {
             // Extract version from: val VERSION = "143.20250816050436"
