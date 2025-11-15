@@ -331,8 +331,6 @@
     %1$s is the name of the app (for example "Firefox").
   -->
   <string name="browser_menu_delete_browsing_data_on_quit">خروج از %1$s</string>
-  <!-- Content description (not visible, for screen readers etc.) for recommended extensions in main menu -->
-  <string name="browser_menu_recommended_extensions_content_description">اطلاعات بیشتر</string>
   <!--
     Content description for a banner within the menu which prompt the user to make this app their default browser.
     %1$s is the name of the app (for example "Firefox").
