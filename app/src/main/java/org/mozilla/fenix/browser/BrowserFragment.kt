@@ -447,17 +447,11 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 secondaryImageTintResource = disableTint,
                 disableInSecondaryState = true,
                 longClickListener = {
-                    if (!this.isTablet) {
-                        NavigationBar.browserBackLongTapped.record(NoExtras())
-                    }
                     browserToolbarInteractor.onBrowserToolbarMenuItemTapped(
                         ToolbarMenu.Item.Back(viewHistory = true, isOnToolbar = true),
                     )
                 },
                 listener = {
-                    if (!this.isTablet) {
-                        NavigationBar.browserBackTapped.record(NoExtras())
-                    }
                     browserToolbarInteractor.onBrowserToolbarMenuItemTapped(
                         ToolbarMenu.Item.Back(viewHistory = false, isOnToolbar = true),
                     )
@@ -479,17 +473,11 @@ class BrowserFragment : BaseBrowserFragment(), UserInteractionHandler {
                 secondaryImageTintResource = disableTint,
                 disableInSecondaryState = true,
                 longClickListener = {
-                    if (!this.isTablet) {
-                        NavigationBar.browserForwardLongTapped.record(NoExtras())
-                    }
                     browserToolbarInteractor.onBrowserToolbarMenuItemTapped(
                         ToolbarMenu.Item.Forward(viewHistory = true, isOnToolbar = true),
                     )
                 },
                 listener = {
-                    if (!this.isTablet) {
-                        NavigationBar.browserForwardTapped.record(NoExtras())
-                    }
                     browserToolbarInteractor.onBrowserToolbarMenuItemTapped(
                         ToolbarMenu.Item.Forward(viewHistory = false, isOnToolbar = true),
                     )

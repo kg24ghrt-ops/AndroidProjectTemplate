@@ -84,11 +84,6 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         binding = FragmentAddOnsManagementBinding.bind(view)
         bindRecyclerView()
         setupMenu()
-        (activity as HomeActivity).webExtensionPromptFeature.onAddonChanged = {
-            runIfFragmentIsAttached {
-                adapter?.updateAddon(it)
-            }
-        }
         addonImportFilePicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 result: ActivityResult ->
             if(result.resultCode == Activity.RESULT_OK) {
