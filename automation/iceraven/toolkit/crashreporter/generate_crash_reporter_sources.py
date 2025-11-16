@@ -369,6 +369,6 @@ def emit_java(output):
 
 
 if __name__ == '__main__':
-    file_gen = 'android-components/components/lib/crash/src/main/java/mozilla/components/lib/crash/service/CrashReport.java'
+    file_gen = 'android-components/components/lib/crash/src/main/java/mozilla/components/lib/crash/service/CrashReport.kt'
     with open(file_gen, 'w') as f:
         emit_java(output=f)
