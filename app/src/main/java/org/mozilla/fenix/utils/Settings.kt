@@ -2483,6 +2483,7 @@ class Settings(private val appContext: Context) : PreferencesHolder {
     var shouldShowSuccessDownloadDialog by booleanPreference(
         appContext.getPreferenceKey(R.string.pref_key_success_download_dialog),
         default = true,
+    )
 
     /**
      * Indicates whether Relay enabled or not.
