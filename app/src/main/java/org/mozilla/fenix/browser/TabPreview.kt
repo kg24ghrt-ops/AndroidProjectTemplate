@@ -182,26 +182,35 @@ class TabPreview @JvmOverloads constructor(
             )
 
             ToolbarAction.SiteInfo -> {
+                val highlight = (
+                        tab?.content?.permissionHighlights?.permissionsChanged == true
+                        ) || (
+                        tab?.trackingProtection?.ignoredOnTrackingProtection == true
+                        )
+
                 if (tab?.content?.url?.isContentUrl() == true) {
                     ActionButtonRes(
                         drawableResId = iconsR.drawable.mozac_ic_page_portrait_24,
                         contentDescription = toolbarR.string.mozac_browser_toolbar_content_description_site_info,
+                        highlighted = highlight,
                         onClick = object : BrowserToolbarEvent {},
                     )
                 } else if (
-                    tab?.content?.securityInfo?.secure == true &&
+                    tab?.content?.securityInfo?.isSecure == true &&
                     tab.trackingProtection.enabled &&
                     !tab.trackingProtection.ignoredOnTrackingProtection
                 ) {
                     ActionButtonRes(
                         drawableResId = iconsR.drawable.mozac_ic_shield_checkmark_24,
                         contentDescription = toolbarR.string.mozac_browser_toolbar_content_description_site_info,
+                        highlighted = highlight,
                         onClick = object : BrowserToolbarEvent {},
                     )
                 } else {
                     ActionButtonRes(
                         drawableResId = iconsR.drawable.mozac_ic_shield_slash_24,
                         contentDescription = toolbarR.string.mozac_browser_toolbar_content_description_site_info,
+                        highlighted = highlight,
                         onClick = object : BrowserToolbarEvent {},
                     )
                 }

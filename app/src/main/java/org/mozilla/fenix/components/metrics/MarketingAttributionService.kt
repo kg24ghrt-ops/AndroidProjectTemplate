@@ -8,6 +8,7 @@ import android.content.Context
 import android.os.RemoteException
 import androidx.annotation.VisibleForTesting
 import mozilla.components.support.base.log.logger.Logger
+import org.mozilla.fenix.distributions.DistributionIdManager
 import org.mozilla.fenix.ext.components
 import org.mozilla.fenix.ext.settings
 
@@ -44,7 +45,14 @@ class MarketingAttributionService(private val context: Context) {
         var response: String? = null
 
         @VisibleForTesting
-        internal fun shouldShowMarketingOnboarding(installReferrerResponse: String?): Boolean {
+        internal fun shouldShowMarketingOnboarding(
+            installReferrerResponse: String?,
+            distributionIdManager: DistributionIdManager,
+        ): Boolean {
+            if (distributionIdManager.isPartnershipDistribution()) {
+                return !distributionIdManager.shouldSkipMarketingConsentScreen()
+            }
+
             if (installReferrerResponse.isNullOrBlank()) {
                 return false
             }

@@ -13,6 +13,7 @@ import mozilla.components.lib.state.MiddlewareContext
 import org.mozilla.fenix.GleanMetrics.Toolbar
 import org.mozilla.fenix.components.toolbar.DisplayActions.AddBookmarkClicked
 import org.mozilla.fenix.components.toolbar.DisplayActions.EditBookmarkClicked
+import org.mozilla.fenix.components.toolbar.DisplayActions.HomepageClicked
 import org.mozilla.fenix.components.toolbar.DisplayActions.MenuClicked
 import org.mozilla.fenix.components.toolbar.DisplayActions.NavigateBackClicked
 import org.mozilla.fenix.components.toolbar.DisplayActions.NavigateBackLongClicked
@@ -22,6 +23,7 @@ import org.mozilla.fenix.components.toolbar.DisplayActions.RefreshClicked
 import org.mozilla.fenix.components.toolbar.DisplayActions.ShareClicked
 import org.mozilla.fenix.components.toolbar.DisplayActions.StopRefreshClicked
 import org.mozilla.fenix.components.toolbar.PageEndActionsInteractions.ReaderModeClicked
+import org.mozilla.fenix.components.toolbar.StartPageActions.SiteInfoClicked
 import org.mozilla.fenix.components.toolbar.TabCounterInteractions.AddNewPrivateTab
 import org.mozilla.fenix.components.toolbar.TabCounterInteractions.AddNewTab
 import org.mozilla.fenix.components.toolbar.TabCounterInteractions.TabCounterClicked
@@ -30,6 +32,7 @@ import org.mozilla.fenix.telemetry.ACTION_ADD_BOOKMARK_CLICKED
 import org.mozilla.fenix.telemetry.ACTION_ADD_NEW_PRIVATE_TAB
 import org.mozilla.fenix.telemetry.ACTION_ADD_NEW_TAB
 import org.mozilla.fenix.telemetry.ACTION_EDIT_BOOKMARK_CLICKED
+import org.mozilla.fenix.telemetry.ACTION_HOME_CLICKED
 import org.mozilla.fenix.telemetry.ACTION_MENU_CLICKED
 import org.mozilla.fenix.telemetry.ACTION_NAVIGATE_BACK_CLICKED
 import org.mozilla.fenix.telemetry.ACTION_NAVIGATE_BACK_LONG_CLICKED
@@ -37,6 +40,7 @@ import org.mozilla.fenix.telemetry.ACTION_NAVIGATE_FORWARD_CLICKED
 import org.mozilla.fenix.telemetry.ACTION_NAVIGATE_FORWARD_LONG_CLICKED
 import org.mozilla.fenix.telemetry.ACTION_READER_MODE_CLICKED
 import org.mozilla.fenix.telemetry.ACTION_REFRESH_CLICKED
+import org.mozilla.fenix.telemetry.ACTION_SECURITY_INDICATOR_CLICKED
 import org.mozilla.fenix.telemetry.ACTION_SHARE_CLICKED
 import org.mozilla.fenix.telemetry.ACTION_STOP_CLICKED
 import org.mozilla.fenix.telemetry.ACTION_TAB_COUNTER_CLICKED
@@ -100,6 +104,12 @@ class BrowserToolbarTelemetryMiddleware : Middleware<BrowserToolbarState, Browse
             is ReaderModeClicked -> {
                 trackToolbarEvent(ToolbarActionRecord.ReaderModeClicked, action.source)
             }
+            is HomepageClicked -> {
+                trackToolbarEvent(ToolbarActionRecord.HomepageClicked, action.source)
+            }
+            is SiteInfoClicked -> {
+                trackToolbarEvent(ToolbarActionRecord.SecurityIndicatorClicked, action.source)
+            }
             else -> {}
         }
 
@@ -123,6 +133,8 @@ class BrowserToolbarTelemetryMiddleware : Middleware<BrowserToolbarState, Browse
         data object EditBookmarkClicked : ToolbarActionRecord(ACTION_EDIT_BOOKMARK_CLICKED)
         data object ShareClicked : ToolbarActionRecord(ACTION_SHARE_CLICKED)
         data object ReaderModeClicked : ToolbarActionRecord(ACTION_READER_MODE_CLICKED)
+        data object HomepageClicked : ToolbarActionRecord(ACTION_HOME_CLICKED)
+        data object SecurityIndicatorClicked : ToolbarActionRecord(ACTION_SECURITY_INDICATOR_CLICKED)
     }
 
     private fun trackToolbarEvent(

@@ -26,6 +26,7 @@ class AdjustMetricsService(private val application: Application) : MetricsServic
 
     override fun start() {
         val settings = application.components.settings
+
         if ((BuildConfig.ADJUST_TOKEN.isNullOrBlank())) {
             logger.info("No adjust token defined")
 
@@ -42,6 +43,14 @@ class AdjustMetricsService(private val application: Application) : MetricsServic
             AdjustConfig.ENVIRONMENT_PRODUCTION,
             true,
         )
+
+        val distributionIdManager = application.components.distributionIdManager
+
+        // If we skipped the marketing consent screen, enable COPPA compliance to prevent
+        // personal identifiers from being shared with Adjust.
+        if (distributionIdManager.shouldSkipMarketingConsentScreen()) {
+            config.enableCoppaCompliance()
+        }
 
         val timerId = AdjustAttribution.adjustAttributionTime.start()
         config.setOnAttributionChangedListener {

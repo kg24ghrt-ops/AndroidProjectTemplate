@@ -28,6 +28,8 @@ import mozilla.components.service.nimbus.evalJexlSafe
 import mozilla.components.service.nimbus.messaging.use
 import mozilla.components.support.base.feature.ViewBoundFeatureWrapper
 import mozilla.components.support.base.log.logger.Logger
+import mozilla.components.support.ktx.android.view.tryDisableEdgeToEdge
+import mozilla.components.support.ktx.android.view.tryEnableEnterEdgeToEdge
 import mozilla.components.support.utils.BrowsersCache
 import org.mozilla.fenix.FenixApplication
 import org.mozilla.fenix.GleanMetrics.Pings
@@ -164,7 +166,6 @@ class OnboardingFragment : Fragment() {
             feature = MarketingPageRemovalSupport(
                 prefKey = requireContext().getString(R.string.pref_key_should_show_marketing_onboarding),
                 pagesToDisplay = pagesToDisplay,
-                distributionIdManager = requireComponents.distributionIdManager,
                 settings = requireContext().settings(),
                 lifecycleOwner = viewLifecycleOwner,
             ),
@@ -176,6 +177,9 @@ class OnboardingFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        if (requireContext().settings().useOnboardingRedesign) {
+            activity?.tryEnableEnterEdgeToEdge()
+        }
         hideToolbar()
         maybeResetBrowserCache()
     }
@@ -206,6 +210,9 @@ class OnboardingFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        if (requireContext().settings().useOnboardingRedesign) {
+            activity?.tryDisableEdgeToEdge()
+        }
         if (!isLargeScreenSize()) {
             activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
@@ -243,6 +250,21 @@ class OnboardingFragment : Fragment() {
                 telemetryRecorder.onSkipSignInClick(
                     pagesToDisplay.telemetrySequenceId(),
                     pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.SYNC_SIGN_IN),
+                )
+            },
+            onNotificationPermissionButtonClick = {
+                requireComponents.notificationsDelegate.requestNotificationPermission()
+                telemetryRecorder.onNotificationPermissionClick(
+                    sequenceId = pagesToDisplay.telemetrySequenceId(),
+                    sequencePosition =
+                        pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.NOTIFICATION_PERMISSION),
+                )
+            },
+            onSkipNotificationClick = {
+                telemetryRecorder.onSkipTurnOnNotificationsClick(
+                    sequenceId = pagesToDisplay.telemetrySequenceId(),
+                    sequencePosition =
+                        pagesToDisplay.sequencePosition(OnboardingPageUiData.Type.NOTIFICATION_PERMISSION),
                 )
             },
             onAddFirefoxWidgetClick = {
