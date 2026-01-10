@@ -1,0 +1,23 @@
+{
+  "plugin": "org.smartide.plugin.editor",
+  "run": "echo 'change command from .si.json file'",
+  "gui": false,
+  "intelligence": {
+    ".kt": {
+      "enabled": false,
+      "run": "kotlin-language-server"
+    },
+    ".gradle": {
+      "enabled": true,
+      "run": "groovy-language-server"
+    },
+    ".xml": {
+      "enabled": true,
+      "run": "lemminx"
+    },
+    ".yml": {
+      "enabled": true,
+      "run": "yaml-language-server --stdio"
+    }
+  }
+}
