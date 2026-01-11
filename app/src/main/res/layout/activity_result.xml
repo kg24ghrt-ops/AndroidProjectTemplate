@@ -10,24 +10,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Summary"
-        android:textSize="24sp" />
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tvSummaryText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Data goes here" />
+        android:layout_marginTop="10dp"
+        android:text="Details will appear here" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvResults"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:layout_marginTop="10dp" />
 
     <Button
         android:id="@+id/btnBack"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Back" />
+        android:text="Back to Entry" />
 </LinearLayout>
