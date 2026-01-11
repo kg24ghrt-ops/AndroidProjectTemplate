@@ -1,24 +1,26 @@
 package com.example.mylotto
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.*
-import androidx.appcompat.app.AlertDialog
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mylotto.data.AppDatabase
+import com.example.mylotto.databinding.ActivityMainBinding
 import com.example.mylotto.ui.PickAdapter
 import com.example.mylotto.viewmodel.PickViewModel
-import com.example.mylotto.viewmodel.PickViewModelFactory // See note below
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: PickViewModel
     private lateinit var adapter: PickAdapter
-    
-    // Mapping for Spinner: Display Name to Code
+
+    // Complete Taxonomy from Research Paper
     private val categories = listOf(
-        "Direct" to "d",
+        "Direct (အပွင့်)" to "d",
         "ဘရိတ် (Brake)" to "b",
         "ပါဝါ (Power)" to "p",
         "နက္ခတ် (Nat Khat)" to "n",
@@ -26,15 +28,23 @@ class MainActivity : AppCompatActivity() {
         "ထိပ်စည်း (Front)" to "f",
         "နောက်ပိတ် (Tail)" to "g",
         "ပတ်သီး (Running)" to "t",
-        "အပူး (Twins)" to "a"
+        "အပူး (Twins)" to "a",
+        "ညီကို (Brother)" to "z",
+        "စုံစုံ (Even-Even)" to "c",
+        "မမ (Odd-Odd)" to "v",
+        "မစုံ (Odd-Even)" to "u",
+        "စုံမ (Even-Odd)" to "y"
     )
+
+    private val lotteryTypes = listOf("2D AM", "2D PM", "3D")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        // Initialize ViewBinding
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val dao = AppDatabase.getDatabase(this).pickDao()
-        // Simple ViewModelProvider for demonstration
         viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
                 return PickViewModel(dao) as T
@@ -45,66 +55,52 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        val etName = findViewById<EditText>(R.id.etName)
-        val etNumber = findViewById<EditText>(R.id.etNumber)
-        val etAmount = findViewById<EditText>(R.id.etAmount)
-        val spCategory = findViewById<Spinner>(R.id.spCategory)
-        val btnSave = findViewById<Button>(R.id.btnSave)
-        val btnSummary = findViewById<Button>(R.id.btnSummary) // Add to XML
-        val rvPicks = findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.rvPicks)
+        // 1. Category Spinner Setup
+        val catAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories.map { it.first })
+        catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spCategory.adapter = catAdapter
 
-        // Spinner Setup
-        val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories.map { it.first })
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spCategory.adapter = spinnerAdapter
+        // 2. Lottery Type Spinner (Not in your previous code, but required by specs)
+        // Note: Ensure you have a Spinner with ID spType in your activity_main.xml or use a default
+        val typeAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, lotteryTypes)
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        // If spType isn't in XML yet, this line might need an XML update
+        // binding.spType.adapter = typeAdapter 
 
-        // RecyclerView Setup
+        // 3. RecyclerView Setup
         adapter = PickAdapter(emptyList())
-        rvPicks.layoutManager = LinearLayoutManager(this)
-        rvPicks.adapter = adapter
+        binding.rvPicks.layoutManager = LinearLayoutManager(this)
+        binding.rvPicks.adapter = adapter
 
-        // Observers
+        // 4. Observe Data
         viewModel.allPicks.observe(this) { picks ->
             adapter.updateData(picks)
         }
 
-        // Actions
-        btnSave.setOnClickListener {
-            val name = etName.text.toString()
-            val num = etNumber.text.toString()
-            val amt = etAmount.text.toString()
-            val catCode = categories[spCategory.selectedItemPosition].second
-            
+        // 5. Save Action
+        binding.btnSave.setOnClickListener {
+            val name = binding.etName.text.toString().trim()
+            val num = binding.etNumber.text.toString().trim()
+            val amt = binding.etAmount.text.toString().trim()
+            val catCode = categories[binding.spCategory.selectedItemPosition].second
+            val type = lotteryTypes[0] // Default to 2D AM, or bind to a spinner
+
             if (name.isNotEmpty() && num.isNotEmpty()) {
-                viewModel.addPick(name, num, "2D", catCode, amt)
-                etNumber.text.clear()
-                etAmount.text.clear()
-                Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
+                viewModel.addPick(name, num, type, catCode, amt)
+                
+                // Clear fields for next entry
+                binding.etNumber.text?.clear()
+                binding.etAmount.text?.clear()
+                Toast.makeText(this, "Saved (သိမ်းဆည်းပြီး)", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Fill Name and Number", Toast.LENGTH_SHORT).show()
             }
         }
 
-        btnSummary.setOnClickListener {
-            showSummaryDialog()
+        // 6. Navigation to Result/Summary Screen
+        binding.btnSummary.setOnClickListener {
+            val intent = Intent(this, ResultActivity::class.java)
+            startActivity(intent)
         }
-    }
-
-    private fun showSummaryDialog() {
-        val currentPicks = viewModel.allPicks.value ?: emptyList()
-        
-        val personTotals = currentPicks.groupingBy { it.personName }.eachCount()
-        val categoryTotals = currentPicks.groupingBy { it.categoryCode }.eachCount()
-        
-        val summaryText = StringBuilder()
-        summaryText.append("Total Picks: ${currentPicks.size}\n\n")
-        summaryText.append("By Person:\n")
-        personTotals.forEach { (name, count) -> summaryText.append("- $name: $count\n") }
-        summaryText.append("\nBy Category:\n")
-        categoryTotals.forEach { (code, count) -> summaryText.append("- $code: $count\n") }
-
-        AlertDialog.Builder(this)
-            .setTitle("Summary (အကျဉ်းချုပ်)")
-            .setMessage(summaryText.toString())
-            .setPositiveButton("OK", null)
-            .show()
     }
 }
