@@ -1,102 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.material3.MaterialScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:spacing="8dp">
+        android:padding="16dp">
 
-        <!-- Name Field -->
-        <com.google.android.material.textfield.TextInputLayout
+        <EditText
+            android:id="@+id/etName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name"
-            app:boxStrokeColor="@color/purple_500"
-            app:boxBackgroundMode="outline">
+            android:hint="Person Name" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Number Field -->
-        <com.google.android.material.textfield.TextInputLayout
+        <EditText
+            android:id="@+id/etNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Number (2D/3D)"
-            app:boxStrokeColor="@color/purple_500"
-            app:boxBackgroundMode="outline"
-            android:layout_marginTop="8dp">
+            android:hint="Number"
+            android:inputType="number" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Category Spinner -->
-        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+        <Spinner
             android:id="@+id/spCategory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Category"
-            android:inputType="none"
             android:layout_marginTop="8dp" />
 
-        <!-- Amount Field -->
-        <com.google.android.material.textfield.TextInputLayout
+        <EditText
+            android:id="@+id/etAmount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Amount"
-            app:boxStrokeColor="@color/purple_500"
-            app:boxBackgroundMode="outline"
-            android:layout_marginTop="8dp">
+            android:hint="Amount" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etAmount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Save Button -->
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/btnSave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save"
-            android:layout_marginTop="16dp"
-            style="@style/Widget.Material3.Button" />
+            android:text="Save" />
 
-        <!-- Summary Button -->
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/btnSummary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Summary"
-            android:layout_marginTop="8dp"
-            style="@style/Widget.Material3.Button" />
+            android:text="View Summary" />
 
-        <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvPicks"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginTop="16dp"
-            android:clipToPadding="false"
-            android:paddingBottom="16dp"
-            android:scrollbars="vertical" />
-
+            android:layout_height="400dp"
+            android:layout_marginTop="16dp" />
     </LinearLayout>
-</com.google.android.material.material3.MaterialScrollView>
+</ScrollView>

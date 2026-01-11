@@ -16,17 +16,16 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: PickViewModel
-    private lateinit var adapter: PickAdapter
+    private lateinit var pickAdapter: PickAdapter // Changed to lateinit to allow initialization
 
     private val categories = listOf(
         "Direct" to "d", "Brake" to "b", "Power" to "p", "Nat Khat" to "n",
-        "Reverse" to "r", "Front" to "f", "Tail" to "g", "Running" to "t", "Twins" to "a"
+        "Reverse" to "r", "Front" to "f", "Tail" to "g", "Running" to "t"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        // FIX: Ensure we use binding.root
         setContentView(binding.root)
 
         val dao = AppDatabase.getDatabase(this).pickDao()
@@ -45,27 +44,28 @@ class MainActivity : AppCompatActivity() {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spCategory.adapter = spinnerAdapter
 
-        // FIX: Initialize adapter correctly
-        adapter = PickAdapter(emptyList())
+        pickAdapter = PickAdapter(emptyList())
         binding.rvPicks.layoutManager = LinearLayoutManager(this)
-        binding.rvPicks.adapter = adapter
+        binding.rvPicks.adapter = pickAdapter
 
         viewModel.allPicks.observe(this) { picks ->
-            adapter.updateData(picks)
+            pickAdapter.updateData(picks)
         }
 
         binding.btnSave.setOnClickListener {
             val name = binding.etName.text.toString()
             val num = binding.etNumber.text.toString()
             val amt = binding.etAmount.text.toString()
-            // FIX: Access spinner selection correctly
-            val catCode = categories[binding.spCategory.selectedItemPosition].second
+            
+            // Correct access to Spinner index
+            val selectedIdx = binding.spCategory.selectedItemPosition
+            val catCode = categories[selectedIdx].second
             
             if (name.isNotEmpty() && num.isNotEmpty()) {
                 viewModel.addPick(name, num, "2D", catCode, amt)
-                binding.etNumber.text?.clear()
-                binding.etAmount.text?.clear()
-                Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
+                binding.etNumber.text.clear()
+                binding.etAmount.text.clear()
+                Toast.makeText(this, "Entry Saved", Toast.LENGTH_SHORT).show()
             }
         }
 
