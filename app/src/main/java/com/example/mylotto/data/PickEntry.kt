@@ -1,15 +1,25 @@
 package com.example.mylotto.data
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
-@Entity(tableName = "pick_entries")
-data class PickEntry(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val personName: String,
-    val numberCode: String,      // e.g., "48" or "5"
-    val lotteryType: String,    // "2D AM", "2D PM", "3D"
-    val categoryCode: String,   // "b", "p", "n", "r", etc.
-    val amountText: String,     // e.g., "200r", "1000"
-    val timestamp: Long = System.currentTimeMillis()
-)
+@Dao
+interface PickDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPick(entry: PickEntry)
+
+    @Query("SELECT * FROM pick_entries ORDER BY timestamp DESC")
+    fun getAllPicks(): Flow<List<PickEntry>>
+
+    @Query("SELECT * FROM pick_entries WHERE personName = :name ORDER BY timestamp DESC")
+    fun getPicksByPerson(name: String): Flow<List<PickEntry>>
+
+    @Query("SELECT * FROM pick_entries WHERE categoryCode = :cat ORDER BY timestamp DESC")
+    fun getPicksByCategory(cat: String): Flow<List<PickEntry>>
+
+    @Query("SELECT * FROM pick_entries WHERE lotteryType = :type ORDER BY timestamp DESC")
+    fun getPicksByType(type: String): Flow<List<PickEntry>>
+
+    @Delete
+    suspend fun deletePick(entry: PickEntry)
+}

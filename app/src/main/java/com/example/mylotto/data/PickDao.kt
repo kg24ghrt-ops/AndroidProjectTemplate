@@ -22,4 +22,7 @@ interface PickDao {
 
     @Delete
     suspend fun deletePick(entry: PickEntry)
+
+    @Query("DELETE FROM pick_entries")
+    suspend fun deleteAll()
 }
