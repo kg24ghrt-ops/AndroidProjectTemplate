@@ -10,47 +10,17 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <EditText
-            android:id="@+id/etName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Person Name" />
+        <EditText android:id="@+id/etName" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Name" />
+        <EditText android:id="@+id/etNumber" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Number" android:inputType="number" />
+        <Spinner android:id="@+id/spCategory" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <EditText android:id="@+id/etAmount" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Amount" />
 
-        <EditText
-            android:id="@+id/etNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Number"
-            android:inputType="number" />
-
-        <Spinner
-            android:id="@+id/spCategory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
-
-        <EditText
-            android:id="@+id/etAmount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Amount" />
-
-        <Button
-            android:id="@+id/btnSave"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save" />
-
-        <Button
-            android:id="@+id/btnSummary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="View Summary" />
+        <Button android:id="@+id/btnSave" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Save" />
+        <Button android:id="@+id/btnSummary" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Summary" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvPicks"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:layout_marginTop="16dp" />
+            android:layout_height="400dp" />
     </LinearLayout>
 </ScrollView>

@@ -13,7 +13,6 @@ class ResultActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityResultBinding
     private lateinit var viewModel: PickViewModel
-    private lateinit var adapter: PickAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,13 +22,12 @@ class ResultActivity : AppCompatActivity() {
         val dao = AppDatabase.getDatabase(this).pickDao()
         viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                @Suppress("UNCHECKED_CAST")
                 return PickViewModel(dao) as T
             }
         })[PickViewModel::class.java]
 
-        adapter = PickAdapter(emptyList())
         binding.rvResults.layoutManager = LinearLayoutManager(this)
+        val adapter = PickAdapter(emptyList())
         binding.rvResults.adapter = adapter
 
         viewModel.allPicks.observe(this) { picks ->

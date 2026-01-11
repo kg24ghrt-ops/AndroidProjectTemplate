@@ -16,22 +16,18 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: PickViewModel
-    private lateinit var pickAdapter: PickAdapter // Changed to lateinit to allow initialization
+    private lateinit var pickAdapter: PickAdapter // Changed to lateinit var
 
-    private val categories = listOf(
-        "Direct" to "d", "Brake" to "b", "Power" to "p", "Nat Khat" to "n",
-        "Reverse" to "r", "Front" to "f", "Tail" to "g", "Running" to "t"
-    )
+    private val categories = listOf("Direct" to "d", "Brake" to "b", "Power" to "p")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(binding.root) // FIXED: Uses binding.root
 
         val dao = AppDatabase.getDatabase(this).pickDao()
         viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                @Suppress("UNCHECKED_CAST")
                 return PickViewModel(dao) as T
             }
         })[PickViewModel::class.java]
@@ -40,32 +36,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories.map { it.first })
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spCategory.adapter = spinnerAdapter
+        // Spinner
+        val sAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories.map { it.first })
+        binding.spCategory.adapter = sAdapter
 
-        pickAdapter = PickAdapter(emptyList())
+        // RecyclerView
+        pickAdapter = PickAdapter(emptyList()) // FIXED: Assignment works on var
         binding.rvPicks.layoutManager = LinearLayoutManager(this)
         binding.rvPicks.adapter = pickAdapter
 
-        viewModel.allPicks.observe(this) { picks ->
-            pickAdapter.updateData(picks)
-        }
+        viewModel.allPicks.observe(this) { pickAdapter.updateData(it) }
 
         binding.btnSave.setOnClickListener {
             val name = binding.etName.text.toString()
             val num = binding.etNumber.text.toString()
-            val amt = binding.etAmount.text.toString()
-            
-            // Correct access to Spinner index
-            val selectedIdx = binding.spCategory.selectedItemPosition
-            val catCode = categories[selectedIdx].second
+            val selectedCode = categories[binding.spCategory.selectedItemPosition].second // FIXED access
             
             if (name.isNotEmpty() && num.isNotEmpty()) {
-                viewModel.addPick(name, num, "2D", catCode, amt)
-                binding.etNumber.text.clear()
-                binding.etAmount.text.clear()
-                Toast.makeText(this, "Entry Saved", Toast.LENGTH_SHORT).show()
+                viewModel.addPick(name, num, "2D", selectedCode, binding.etAmount.text.toString())
+                Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
             }
         }
 

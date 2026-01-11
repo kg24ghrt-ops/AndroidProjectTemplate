@@ -1,50 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.material3.MaterialScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="16dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:spacing="8dp">
-
-        <TextView
-            android:id="@+id/tvSummaryHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Summary"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall" />
-
-        <TextView
-            android:id="@+id/tvSummaryText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Details will appear here"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvResults"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginTop="12dp"
-            android:clipToPadding="false"
-            android:paddingBottom="16dp"
-            android:scrollbars="vertical" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnBack"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Back to Entry"
-            android:layout_marginTop="16dp" />
-
-    </LinearLayout>
-</com.google.android.material.material3.MaterialScrollView>
+    <TextView android:id="@+id/tvSummaryText" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Loading..." />
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/rvResults" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
+    <Button android:id="@+id/btnBack" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Back" />
+</LinearLayout>
