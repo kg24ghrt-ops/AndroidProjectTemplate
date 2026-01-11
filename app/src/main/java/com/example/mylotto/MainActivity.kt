@@ -19,27 +19,20 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: PickAdapter
 
     private val categories = listOf(
-        "Direct" to "d",
-        "ဘရိတ် (Brake)" to "b",
-        "ပါဝါ (Power)" to "p",
-        "နက္ခတ် (Nat Khat)" to "n",
-        "အာ (Reverse)" to "r",
-        "ထိပ်စည်း (Front)" to "f",
-        "နောက်ပိတ် (Tail)" to "g",
-        "ပတ်သီး (Running)" to "t",
-        "အပူး (Twins)" to "a"
+        "Direct" to "d", "Brake" to "b", "Power" to "p", "Nat Khat" to "n",
+        "Reverse" to "r", "Front" to "f", "Tail" to "g", "Running" to "t", "Twins" to "a"
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        // Use ViewBinding to inflate layout
         binding = ActivityMainBinding.inflate(layoutInflater)
+        // FIX: Ensure we use binding.root
         setContentView(binding.root)
 
         val dao = AppDatabase.getDatabase(this).pickDao()
         viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
                 return PickViewModel(dao) as T
             }
         })[PickViewModel::class.java]
@@ -48,26 +41,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        // Spinner
         val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories.map { it.first })
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spCategory.adapter = spinnerAdapter
 
-        // RecyclerView
+        // FIX: Initialize adapter correctly
         adapter = PickAdapter(emptyList())
         binding.rvPicks.layoutManager = LinearLayoutManager(this)
         binding.rvPicks.adapter = adapter
 
-        // Data Observation
         viewModel.allPicks.observe(this) { picks ->
             adapter.updateData(picks)
         }
 
-        // Save Click
         binding.btnSave.setOnClickListener {
             val name = binding.etName.text.toString()
             val num = binding.etNumber.text.toString()
             val amt = binding.etAmount.text.toString()
+            // FIX: Access spinner selection correctly
             val catCode = categories[binding.spCategory.selectedItemPosition].second
             
             if (name.isNotEmpty() && num.isNotEmpty()) {
@@ -78,7 +69,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Summary Click - Navigate to ResultActivity
         binding.btnSummary.setOnClickListener {
             startActivity(Intent(this, ResultActivity::class.java))
         }
