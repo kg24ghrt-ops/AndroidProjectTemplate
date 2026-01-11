@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mylotto.data.AppDatabase
@@ -14,34 +15,37 @@ import com.example.mylotto.viewmodel.PickViewModel
 
 class MainActivity : AppCompatActivity() {
 
+    // Properties
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: PickViewModel
     private lateinit var pickAdapter: PickAdapter
 
-    // Taxonomy mapping: Display name to Database Code
-    // Initialized 'by lazy' to ensure it only runs after the Activity has a Context
+    // 2D Lottery Categories (Strings are pulled from strings.xml)
     private val categories by lazy {
         listOf(
-            getString(R.string.cat_direct) to "d",
-            getString(R.string.cat_brake) to "b",
-            getString(R.string.cat_power) to "p",
-            getString(R.string.cat_natkhat) to "n",
-            getString(R.string.cat_reverse) to "r",
-            getString(R.string.cat_front) to "f",
-            getString(R.string.cat_tail) to "g",
-            getString(R.string.cat_running) to "t",
-            getString(R.string.cat_twins) to "a"
+            getString(R.string.cat_direct) to "d",    // Direct (အပွင့်)
+            getString(R.string.cat_reverse) to "r",   // Reverse (အာ)
+            getString(R.string.cat_brake) to "b",     // Brake (ဘရိတ်)
+            getString(R.string.cat_power) to "p",     // Power (ပါဝါ)
+            getString(R.string.cat_natkhat) to "n",   // Nat Khat (နက္ခတ်)
+            getString(R.string.cat_front) to "f",     // Front (ထိပ်စည်း)
+            getString(R.string.cat_tail) to "g",      // Tail (နောက်ပိတ်)
+            getString(R.string.cat_running) to "t",    // Running (ပတ်သီး)
+            getString(R.string.cat_twins) to "a"      // Twins (အပူး)
         )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        // 1. FORCE LIGHT MODE: Prevents Dark Mode from making text invisible
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         
-        // 1. Inflate ViewBinding
+        super.onCreate(savedInstanceState)
+
+        // 2. INITIALIZE VIEW BINDING: Fixes 'setContentView' errors
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 2. Initialize ViewModel via Factory
+        // 3. INITIALIZE VIEWMODEL: Handles Database Logic
         val dao = AppDatabase.getDatabase(this).pickDao()
         viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
@@ -55,7 +59,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        // Spinner: Setup with localized category names
+        // Setup Spinner (Category Selector)
         val spinnerAdapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
@@ -64,50 +68,56 @@ class MainActivity : AppCompatActivity() {
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spCategory.adapter = spinnerAdapter
 
-        // RecyclerView: Initialize with empty list
+        // Setup RecyclerView (Recent Entries List)
         pickAdapter = PickAdapter(emptyList())
-        binding.rvPicks.layoutManager = LinearLayoutManager(this)
-        binding.rvPicks.adapter = pickAdapter
-
-        // Button: Save Entry
-        binding.btnSave.setOnClickListener {
-            saveData()
+        binding.rvPicks.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = pickAdapter
         }
 
-        // Button: Open Summary Activity
+        // SAVE BUTTON: Logic for 2D Entry
+        binding.btnSave.setOnClickListener {
+            handleSave()
+        }
+
+        // SUMMARY BUTTON: Open Results
         binding.btnSummary.setOnClickListener {
             startActivity(Intent(this, ResultActivity::class.java))
         }
     }
 
     private fun setupObservers() {
-        // Observe Database changes and update RecyclerView
+        // Watch the database for changes and update the list automatically
         viewModel.allPicks.observe(this) { picks ->
             pickAdapter.updateData(picks)
         }
     }
 
-    private fun saveData() {
+    private fun handleSave() {
         val name = binding.etName.text.toString().trim()
         val num = binding.etNumber.text.toString().trim()
         val amt = binding.etAmount.text.toString().trim()
         
-        // Get the selection index from Spinner
+        // Correct access to the selected Spinner item
         val selectedIdx = binding.spCategory.selectedItemPosition
         val categoryCode = categories[selectedIdx].second
 
         if (name.isNotEmpty() && num.isNotEmpty()) {
-            // Add to database via ViewModel
+            // Check for valid 2D number length if it's a Direct pick
+            if (categoryCode == "d" && num.length > 2) {
+                Toast.makeText(this, "2D requires 2 digits only", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            // Save to Database (Type is hardcoded to "2D")
             viewModel.addPick(name, num, "2D", categoryCode, amt)
             
-            // Clear inputs
+            // Clear inputs for next entry
             binding.etNumber.text?.clear()
             binding.etAmount.text?.clear()
-            
-            // Fixed: Literal string used to avoid "Unresolved reference" if XML isn't ready
-            Toast.makeText(this, "Saved Successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "2D Entry Saved", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "Please fill in Name and Number", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Please enter Name and Number", Toast.LENGTH_SHORT).show()
         }
     }
 }
