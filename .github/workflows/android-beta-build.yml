@@ -36,12 +36,12 @@ jobs:
     - name: Ensure Gradle Wrapper is executable
       run: chmod +x ./gradlew
 
-    - name: Download Gradle Wrapper JAR if missing
+    - name: Download prebuilt Gradle wrapper JAR if missing
       run: |
+        mkdir -p gradle/wrapper
         if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
-          mkdir -p gradle/wrapper
-          curl -L https://services.gradle.org/distributions/gradle-8.2-all.zip -o gradle.zip
-          unzip -j gradle.zip "gradle-8.2/lib/gradle-wrapper.jar" -d gradle/wrapper
+          curl -L -o gradle/wrapper/gradle-wrapper.jar \
+          https://raw.githubusercontent.com/gradle/gradle/v8.2/gradle/wrapper/gradle-wrapper.jar
         fi
 
     - name: Verify Gradle
