@@ -25,9 +25,7 @@ android {
 
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile(
-                'proguard-android-optimize.txt'
-            ), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -43,6 +41,12 @@ android {
     buildFeatures {
         viewBinding true
     }
+}
+
+// <--- THIS IS REQUIRED FOR CI TO RESOLVE ANDROIDX/LIFECYCLE DEPENDENCIES
+repositories {
+    google()
+    mavenCentral()
 }
 
 dependencies {
