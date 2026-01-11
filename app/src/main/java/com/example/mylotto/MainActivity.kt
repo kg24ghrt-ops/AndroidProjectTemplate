@@ -22,30 +22,30 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: PickViewModel
     private lateinit var pickAdapter: PickAdapter
 
-    // Full 2D Taxonomy mapped to localized string resources
+    // Taxonomy of 2D codes mapped to localized strings
     private fun getLocalizedCategories(): List<Pair<String, String>> {
         return listOf(
-            getString(R.string.cat_direct) to "d",    // Direct (ဒွဲ)
-            getString(R.string.cat_reverse) to "r",   // Ar (အာ)
-            getString(R.string.cat_brake) to "b",     // Brake (ဘရိတ်)
-            getString(R.string.cat_power) to "p",     // Power (ပါဝါ)
-            getString(R.string.cat_natkhat) to "n",   // Nat Khat (နက္ခတ်)
-            getString(R.string.cat_front) to "f",     // Hteik (ထိပ်စည်း)
-            getString(R.string.cat_tail) to "g",      // Nauk (နောက်ပိတ်)
-            getString(R.string.cat_running) to "t",    // Pat-thee (ပတ်သီး)
-            getString(R.string.cat_twins) to "a",     // A-puu (အပူး)
-            getString(R.string.cat_brother) to "z",   // Nyi-Ko (ညီကို)
-            getString(R.string.cat_akhway) to "k",    // A-khway (အခွေ)
-            getString(R.string.cat_akhway_twins) to "e", // A-khway-puu (အခွေပူး)
-            getString(R.string.cat_sone_sone) to "c", // Even-Even (စုံစုံ)
-            getString(R.string.cat_ma_ma) to "v",     // Odd-Odd (မမ)
-            getString(R.string.cat_ma_sone) to "u",   // Odd-Even (မစုံ)
-            getString(R.string.cat_sone_ma) to "y"    // Even-Odd (စုံမ)
+            getString(R.string.cat_direct) to "d",
+            getString(R.string.cat_reverse) to "r",
+            getString(R.string.cat_brake) to "b",
+            getString(R.string.cat_power) to "p",
+            getString(R.string.cat_natkhat) to "n",
+            getString(R.string.cat_front) to "f",
+            getString(R.string.cat_tail) to "g",
+            getString(R.string.cat_running) to "t",
+            getString(R.string.cat_twins) to "a",
+            getString(R.string.cat_brother) to "z",
+            getString(R.string.cat_akhway) to "k",
+            getString(R.string.cat_akhway_twins) to "e",
+            getString(R.string.cat_sone_sone) to "c",
+            getString(R.string.cat_ma_ma) to "v",
+            getString(R.string.cat_ma_sone) to "u",
+            getString(R.string.cat_sone_ma) to "y"
         )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Fix: Force Light Mode to prevent UI colors from breaking
+        // Prevent UI colors from breaking in System Dark Mode
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         
         super.onCreate(savedInstanceState)
@@ -102,25 +102,53 @@ class MainActivity : AppCompatActivity() {
         if (name.isNotEmpty() && inputNum.isNotEmpty() && baseAmountStr.isNotEmpty()) {
             val baseAmount = baseAmountStr.toLongOrNull() ?: 0L
             
-            // 1. Logic Engine generates all related 2D numbers
-            val numbersToSave = LotteryEngine.expandCode(inputNum, categoryCode)
+            // 1. Logic Engine creates the full Voucher Result
+            val result = LotteryEngine.expand(inputNum, categoryCode)
             
-            // 2. Automatic Money Multiplication
-            val totalCost = baseAmount * numbersToSave.size
+            // 2. Multiplied Money Calculation
+            val finalTotalAmount = baseAmount * result.multiplier
 
-            // 3. Save each related number as a separate entry
-            for (num in numbersToSave) {
-                viewModel.addPick(name, num, "2D", categoryCode, baseAmount.toString())
-            }
+            // 3. Save as a SINGLE entry (Voucher Style) 
+            // result.printableList contains the full "11, 12, 13..." string
+            viewModel.addPick(
+                name = name,
+                number = result.printableList, 
+                type = "2D",
+                category = getString(getCategoryNameRes(categoryCode)),
+                amount = finalTotalAmount.toString()
+            )
 
+            // UI Clear
             binding.etNumber.text?.clear()
             binding.etAmount.text?.clear()
 
-            // Toast feedback shows how many numbers were generated and total cost
-            val msg = "Saved ${numbersToSave.size} numbers. Total: $totalCost"
+            val msg = "Saved ${result.multiplier} numbers. Total: $finalTotalAmount"
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
         } else {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Helper to get the correct string resource for the saved category label
+    private fun getCategoryNameRes(code: String): Int {
+        return when(code) {
+            "d" -> R.string.cat_direct
+            "r" -> R.string.cat_reverse
+            "b" -> R.string.cat_brake
+            "p" -> R.string.cat_power
+            "n" -> R.string.cat_natkhat
+            "f" -> R.string.cat_front
+            "g" -> R.string.cat_tail
+            "t" -> R.string.cat_running
+            "a" -> R.string.cat_twins
+            "z" -> R.string.cat_brother
+            "k" -> R.string.cat_akhway
+            "e" -> R.string.cat_akhway_twins
+            "c" -> R.string.cat_sone_sone
+            "v" -> R.string.cat_ma_ma
+            "u" -> R.string.cat_ma_sone
+            "y" -> R.string.cat_sone_ma
+            else -> R.string.cat_direct
         }
     }
 
@@ -137,7 +165,6 @@ class MainActivity : AppCompatActivity() {
         config.setLocale(locale)
         baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
         
-        // Restart activity to apply language update
         finish()
         startActivity(intent)
     }

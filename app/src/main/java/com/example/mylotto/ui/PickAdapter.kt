@@ -1,42 +1,34 @@
 package com.example.mylotto.ui
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mylotto.R
-import com.example.mylotto.data.PickEntry
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.mylotto.data.Pick
+import com.example.mylotto.databinding.ItemPickBinding
 
-class PickAdapter(private var list: List<PickEntry>) : RecyclerView.Adapter<PickAdapter.PickViewHolder>() {
+class PickAdapter(private var picks: List<Pick>) : RecyclerView.Adapter<PickAdapter.ViewHolder>() {
 
-    class PickViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvInfo: TextView = view.findViewById(R.id.tvInfo)
-        val tvAmount: TextView = view.findViewById(R.id.tvAmount)
-        val tvDate: TextView = view.findViewById(R.id.tvDate)
+    inner class ViewHolder(val binding: ItemPickBinding) : RecyclerView.ViewHolder(binding.root)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = ItemPickBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PickViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_pick, parent, false)
-        return PickViewHolder(view)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val pick = picks[position]
+        holder.binding.apply {
+            tvName.text = pick.name
+            tvNumbersList.text = pick.number // This is the comma-separated list
+            tvTotalAmount.text = "${pick.amount} Ks"
+            tvCategory.text = pick.category
+        }
     }
 
-    override fun onBindViewHolder(holder: PickViewHolder, position: Int) {
-        val item = list[position]
-        val date = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date(item.timestamp))
-        
-        // Display logic: "Name - [Code][Cat] - [Type]"
-        holder.tvInfo.text = "${item.personName} - ${item.numberCode}${item.categoryCode} (${item.lotteryType})"
-        holder.tvAmount.text = item.amountText
-        holder.tvDate.text = date
-    }
+    override fun getItemCount() = picks.size
 
-    override fun getItemCount() = list.size
-
-    fun updateData(newList: List<PickEntry>) {
-        this.list = newList
+    fun updateData(newPicks: List<Pick>) {
+        this.picks = newPicks
         notifyDataSetChanged()
     }
 }
