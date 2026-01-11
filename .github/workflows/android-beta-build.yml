@@ -33,17 +33,16 @@ jobs:
         key: gradle-${{ runner.os }}-${{ hashFiles('**/gradle-wrapper.properties') }}
         restore-keys: gradle-${{ runner.os }}-
 
-    - name: Ensure Gradle Wrapper exists
+    - name: Ensure Gradle Wrapper is executable
+      run: chmod +x ./gradlew
+
+    - name: Download Gradle Wrapper JAR if missing
       run: |
-        WRAPPER_JAR="./gradle/wrapper/gradle-wrapper.jar"
-        if [ ! -f "$WRAPPER_JAR" ]; then
-          echo "gradle-wrapper.jar missing, downloading..."
-          mkdir -p ./gradle/wrapper
-          curl -L -o gradle-8.2-all.zip https://services.gradle.org/distributions/gradle-8.2-all.zip
-          unzip -j gradle-8.2-all.zip "gradle-8.2/lib/gradle-wrapper.jar" -d ./gradle/wrapper
-          rm gradle-8.2-all.zip
+        if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+          mkdir -p gradle/wrapper
+          curl -L https://services.gradle.org/distributions/gradle-8.2-all.zip -o gradle.zip
+          unzip -j gradle.zip "gradle-8.2/lib/gradle-wrapper.jar" -d gradle/wrapper
         fi
-        chmod +x ./gradlew
 
     - name: Verify Gradle
       run: ./gradlew --version
