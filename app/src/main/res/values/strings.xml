@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MyLotto Tracker</string>
-    <string name="person_name">Person Name (အမည်)</string>
-    <string name="number_code">Number/Code (ဂဏန်း)</string>
-    <string name="amount_label">Amount (ပမာဏ)</string>
-    <string name="save_btn">Save (သိမ်းဆည်းမည်)</string>
-    <string name="summary_btn">Summary (အကျဉ်းချုပ်)</string>
+    
+    <string name="cat_direct">Direct</string>
+    <string name="cat_brake">Brake</string>
+    <string name="cat_power">Power</string>
+    <string name="cat_natkhat">Nat Khat</string>
+    <string name="cat_reverse">Reverse</string>
+    <string name="cat_front">Front</string>
+    <string name="cat_tail">Tail</string>
+    <string name="cat_running">Running</string>
+    <string name="cat_twins">Twins</string>
 </resources>
