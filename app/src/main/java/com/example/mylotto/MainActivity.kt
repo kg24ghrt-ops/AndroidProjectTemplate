@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Maps the 2D classification codes to localized strings.
-     * This ensures the Spinner shows Myanmar or English based on settings.
      */
     private fun getLocalizedCategories(): List<Pair<String, String>> {
         return listOf(
@@ -69,7 +68,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        // Language Switcher
         binding.btnLanguageToggle.setOnClickListener { toggleLanguage() }
 
         updateSpinner()
@@ -79,7 +77,6 @@ class MainActivity : AppCompatActivity() {
         binding.rvPicks.layoutManager = LinearLayoutManager(this)
         binding.rvPicks.adapter = pickAdapter
 
-        // Action Buttons
         binding.btnSave.setOnClickListener { handleSave() }
         binding.btnSummary.setOnClickListener {
             startActivity(Intent(this, ResultActivity::class.java))
@@ -118,16 +115,16 @@ class MainActivity : AppCompatActivity() {
             // 2. Automatic Calculation: Base Amount x Total Numbers
             val totalCost = baseAmount * expansion.multiplier
 
-            // 3. Save as a SINGLE Grouped Voucher Entry
+            // 3. FIXED: Using the exact parameter names from your PickViewModel: num, cat, amt
             viewModel.addPick(
                 name = name,
-                number = expansion.printableList, // Saves "11, 12, 13..."
+                num = expansion.printableList, // printableList goes to 'num'
                 type = "2D",
-                category = getString(getCategoryNameRes(categoryCode)),
-                amount = totalCost.toString()
+                cat = getString(getCategoryNameRes(categoryCode)), // category name goes to 'cat'
+                amt = totalCost.toString() // total cost goes to 'amt'
             )
 
-            // Clear Input fields for next entry
+            // Clear Input fields
             binding.etNumber.text?.clear()
             binding.etAmount.text?.clear()
 
@@ -139,9 +136,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Maps the internal code back to the string resource for database logging.
-     */
     private fun getCategoryNameRes(code: String): Int {
         return when(code) {
             "d" -> R.string.cat_direct
@@ -177,7 +171,6 @@ class MainActivity : AppCompatActivity() {
         config.setLocale(locale)
         baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
         
-        // Refresh activity to apply language changes
         finish()
         startActivity(intent)
     }
