@@ -18,6 +18,10 @@
     ".yml": {
       "enabled": true,
       "run": "yaml-language-server --stdio"
+    },
+    ".properties": {
+      "enabled": true,
+      "run": "lemminx"
     }
   }
 }
