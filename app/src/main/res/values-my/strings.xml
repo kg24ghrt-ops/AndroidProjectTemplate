@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="save_success">မှတ်တမ်းတင်ပြီးပါပြီ။</string>
     <string name="cat_direct">တိုက်ရိုက် (Direct)</string>
     <string name="cat_brake">ဘရိတ် (Brake)</string>
     <string name="cat_power">ပါဝါ (Power)</string>
-    <string name="cat_natkhat">နက္ခတ် (Nat Khat)</string>
-    <string name="cat_reverse">အာ (Reverse)</string>
-    <string name="cat_front">ထိပ်စည်း (Front)</string>
-    <string name="cat_tail">နောက်ပိတ် (Tail)</string>
-    <string name="cat_running">ပတ်သီး (Running)</string>
-    <string name="cat_twins">အပူး (Twins)</string>
-</resources>
+    </resources>

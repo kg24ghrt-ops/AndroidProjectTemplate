@@ -18,7 +18,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: PickViewModel
     private lateinit var pickAdapter: PickAdapter
 
-    // Use 'by lazy' so getString() is called only after the Activity is attached to a context
+    // Taxonomy mapping: Display name to Database Code
+    // Initialized 'by lazy' to ensure it only runs after the Activity has a Context
     private val categories by lazy {
         listOf(
             getString(R.string.cat_direct) to "d",
@@ -36,11 +37,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // 1. Initialize ViewBinding
+        // 1. Inflate ViewBinding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 2. Initialize ViewModel with Factory
+        // 2. Initialize ViewModel via Factory
         val dao = AppDatabase.getDatabase(this).pickDao()
         viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
@@ -54,60 +55,59 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        // Spinner Setup using localized strings
+        // Spinner: Setup with localized category names
         val spinnerAdapter = ArrayAdapter(
-            this, 
-            android.R.layout.simple_spinner_item, 
+            this,
+            android.R.layout.simple_spinner_item,
             categories.map { it.first }
         )
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spCategory.adapter = spinnerAdapter
 
-        // RecyclerView Setup
+        // RecyclerView: Initialize with empty list
         pickAdapter = PickAdapter(emptyList())
-        binding.rvPicks.apply {
-            layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter = pickAdapter
-        }
+        binding.rvPicks.layoutManager = LinearLayoutManager(this)
+        binding.rvPicks.adapter = pickAdapter
 
-        // Save Button Logic
+        // Button: Save Entry
         binding.btnSave.setOnClickListener {
-            saveEntry()
+            saveData()
         }
 
-        // Summary Button Logic (Navigate to ResultActivity)
+        // Button: Open Summary Activity
         binding.btnSummary.setOnClickListener {
-            val intent = Intent(this, ResultActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, ResultActivity::class.java))
         }
     }
 
     private fun setupObservers() {
+        // Observe Database changes and update RecyclerView
         viewModel.allPicks.observe(this) { picks ->
             pickAdapter.updateData(picks)
         }
     }
 
-    private fun saveEntry() {
+    private fun saveData() {
         val name = binding.etName.text.toString().trim()
         val num = binding.etNumber.text.toString().trim()
         val amt = binding.etAmount.text.toString().trim()
         
-        // Safely access the selected category code
-        val selectedIndex = binding.spCategory.selectedItemPosition
-        val catCode = categories[selectedIndex].second
+        // Get the selection index from Spinner
+        val selectedIdx = binding.spCategory.selectedItemPosition
+        val categoryCode = categories[selectedIdx].second
 
         if (name.isNotEmpty() && num.isNotEmpty()) {
-            // "2D" is used as the default type here; can be made dynamic later
-            viewModel.addPick(name, num, "2D", catCode, amt)
+            // Add to database via ViewModel
+            viewModel.addPick(name, num, "2D", categoryCode, amt)
             
-            // Clear inputs for the next entry
+            // Clear inputs
             binding.etNumber.text?.clear()
             binding.etAmount.text?.clear()
             
-            Toast.makeText(this, getString(R.string.save_success), Toast.LENGTH_SHORT).show()
+            // Fixed: Literal string used to avoid "Unresolved reference" if XML isn't ready
+            Toast.makeText(this, "Saved Successfully!", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "Please enter Name and Number", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Please fill in Name and Number", Toast.LENGTH_SHORT).show()
         }
     }
 }
