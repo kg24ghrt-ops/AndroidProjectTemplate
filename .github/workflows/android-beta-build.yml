@@ -11,8 +11,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      JAVA_HOME: /usr/lib/jvm/java-17-temurin
 
     steps:
     - name: Checkout repository
@@ -35,17 +33,6 @@ jobs:
 
     - name: Ensure Gradle Wrapper is executable
       run: chmod +x ./gradlew
-
-    - name: Download Gradle Wrapper JAR if missing
-      run: |
-        if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
-          mkdir -p gradle/wrapper
-          curl -L https://services.gradle.org/distributions/gradle-8.2-all.zip -o gradle.zip
-          unzip -j gradle.zip "gradle-8.2/lib/gradle-wrapper.jar" -d gradle/wrapper
-        fi
-
-    - name: Verify Gradle
-      run: ./gradlew --version
 
     - name: Build Debug APK
       run: ./gradlew assembleDebug --no-daemon
