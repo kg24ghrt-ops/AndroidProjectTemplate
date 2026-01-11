@@ -22,7 +22,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: PickViewModel
     private lateinit var pickAdapter: PickAdapter
 
-    // Taxonomy of 2D codes mapped to localized strings
+    /**
+     * Maps the 2D classification codes to localized strings.
+     * This ensures the Spinner shows Myanmar or English based on settings.
+     */
     private fun getLocalizedCategories(): List<Pair<String, String>> {
         return listOf(
             getString(R.string.cat_direct) to "d",
@@ -45,13 +48,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Prevent UI colors from breaking in System Dark Mode
+        // Fix: Force Light Mode to avoid UI "Black on Black" text issues
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Initialize Database and ViewModel
         val dao = AppDatabase.getDatabase(this).pickDao()
         viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
@@ -65,14 +69,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
+        // Language Switcher
         binding.btnLanguageToggle.setOnClickListener { toggleLanguage() }
 
         updateSpinner()
 
+        // Setup RecyclerView for Voucher display
         pickAdapter = PickAdapter(emptyList())
         binding.rvPicks.layoutManager = LinearLayoutManager(this)
         binding.rvPicks.adapter = pickAdapter
 
+        // Action Buttons
         binding.btnSave.setOnClickListener { handleSave() }
         binding.btnSummary.setOnClickListener {
             startActivity(Intent(this, ResultActivity::class.java))
@@ -90,46 +97,51 @@ class MainActivity : AppCompatActivity() {
         binding.spCategory.adapter = spinnerAdapter
     }
 
+    /**
+     * Core Logic: Handles dynamic number expansion and money calculation.
+     */
     private fun handleSave() {
         val name = binding.etName.text.toString().trim()
         val inputNum = binding.etNumber.text.toString().trim()
-        val baseAmountStr = binding.etAmount.text.toString().trim()
+        val amountStr = binding.etAmount.text.toString().trim()
         
         val categories = getLocalizedCategories()
         val selectedIdx = binding.spCategory.selectedItemPosition
         val categoryCode = categories[selectedIdx].second
 
-        if (name.isNotEmpty() && inputNum.isNotEmpty() && baseAmountStr.isNotEmpty()) {
-            val baseAmount = baseAmountStr.toLongOrNull() ?: 0L
+        if (name.isNotEmpty() && inputNum.isNotEmpty() && amountStr.isNotEmpty()) {
+            val baseAmount = amountStr.toLongOrNull() ?: 0L
             
-            // 1. Logic Engine creates the full Voucher Result
-            val result = LotteryEngine.expand(inputNum, categoryCode)
+            // 1. Generate every single number for the voucher (e.g., A-khway logic)
+            val expansion = LotteryEngine.expand(inputNum, categoryCode)
             
-            // 2. Multiplied Money Calculation
-            val finalTotalAmount = baseAmount * result.multiplier
+            // 2. Automatic Calculation: Base Amount x Total Numbers
+            val totalCost = baseAmount * expansion.multiplier
 
-            // 3. Save as a SINGLE entry (Voucher Style) 
-            // result.printableList contains the full "11, 12, 13..." string
+            // 3. Save as a SINGLE Grouped Voucher Entry
             viewModel.addPick(
                 name = name,
-                number = result.printableList, 
+                number = expansion.printableList, // Saves "11, 12, 13..."
                 type = "2D",
                 category = getString(getCategoryNameRes(categoryCode)),
-                amount = finalTotalAmount.toString()
+                amount = totalCost.toString()
             )
 
-            // UI Clear
+            // Clear Input fields for next entry
             binding.etNumber.text?.clear()
             binding.etAmount.text?.clear()
 
-            val msg = "Saved ${result.multiplier} numbers. Total: $finalTotalAmount"
+            // Feedback
+            val msg = "Saved ${expansion.multiplier} numbers. Total: $totalCost Ks"
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
         } else {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
         }
     }
 
-    // Helper to get the correct string resource for the saved category label
+    /**
+     * Maps the internal code back to the string resource for database logging.
+     */
     private fun getCategoryNameRes(code: String): Int {
         return when(code) {
             "d" -> R.string.cat_direct
@@ -165,6 +177,7 @@ class MainActivity : AppCompatActivity() {
         config.setLocale(locale)
         baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
         
+        // Refresh activity to apply language changes
         finish()
         startActivity(intent)
     }
