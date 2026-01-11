@@ -1,19 +1,26 @@
 <resources>
     <string name="app_name">2D မှတ်တမ်း</string>
     <string name="hint_name">အမည်</string>
-    <string name="hint_number">ဂဏန်း (2D)</string>
+    <string name="hint_number">ဂဏန်း</string>
     <string name="hint_amount">ငွေပမာဏ</string>
     <string name="btn_save">သိမ်းဆည်းမည်</string>
     <string name="btn_summary">အကျဉ်းချုပ်ကြည့်ရန်</string>
     <string name="save_success">သိမ်းဆည်းပြီးပါပြီ။</string>
 
-    <string name="cat_direct">တိုက်ရိုက်</string>
-    <string name="cat_reverse">အာ (Reverse)</string>
-    <string name="cat_brake">ဘရိတ်</string>
-    <string name="cat_power">ပါဝါ</string>
-    <string name="cat_natkhat">နက္ခတ်</string>
-    <string name="cat_front">ထိပ်စည်း</string>
-    <string name="cat_tail">နောက်ပိတ်</string>
-    <string name="cat_running">ပတ်သီး</string>
-    <string name="cat_twins">အပူး</string>
+    <string name="cat_direct">တိုက်ရိုက် (Direct)</string>
+    <string name="cat_reverse">အာ (Reverse/Ar)</string>
+    <string name="cat_brake">ဘရိတ် (Brake)</string>
+    <string name="cat_power">ပါဝါ (Power)</string>
+    <string name="cat_natkhat">နက္ခတ် (Nat Khat)</string>
+    <string name="cat_front">ထိပ်စည်း (Hteik-see)</string>
+    <string name="cat_tail">နောက်ပိတ် (Nauk-peik)</string>
+    <string name="cat_running">ပတ်သီး (Pat-thee)</string>
+    <string name="cat_twins">အပူး (A-puu)</string>
+    <string name="cat_brother">ညီကို (Brother)</string>
+    <string name="cat_akhway">အခွေ (A-khway)</string>
+    <string name="cat_akhway_twins">အခွေပူး (A-khway-puu)</string>
+    <string name="cat_sone_sone">စုံစုံ (Even-Even)</string>
+    <string name="cat_ma_ma">မမ (Odd-Odd)</string>
+    <string name="cat_ma_sone">မစုံ (Odd-Even)</string>
+    <string name="cat_sone_ma">စုံမ (Even-Odd)</string>
 </resources>

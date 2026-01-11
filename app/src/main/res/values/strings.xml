@@ -1,19 +1,26 @@
 <resources>
     <string name="app_name">2D Tracker</string>
-    <string name="hint_name">Person Name</string>
-    <string name="hint_number">Number (2D)</string>
+    <string name="hint_name">Player Name</string>
+    <string name="hint_number">Number</string>
     <string name="hint_amount">Amount</string>
     <string name="btn_save">Save Entry</string>
     <string name="btn_summary">View Summary</string>
     <string name="save_success">Saved Successfully!</string>
 
     <string name="cat_direct">Direct</string>
-    <string name="cat_reverse">Reverse (A)</string>
+    <string name="cat_reverse">Reverse (Ar)</string>
     <string name="cat_brake">Brake</string>
     <string name="cat_power">Power</string>
     <string name="cat_natkhat">Nat Khat</string>
-    <string name="cat_front">Front</string>
-    <string name="cat_tail">Tail</string>
-    <string name="cat_running">Running</string>
-    <string name="cat_twins">Twins</string>
+    <string name="cat_front">Front (Hteik)</string>
+    <string name="cat_tail">Tail (Nauk)</string>
+    <string name="cat_running">Running (Pat-thee)</string>
+    <string name="cat_twins">Twins (A-puu)</string>
+    <string name="cat_brother">Brother (Nyi Ko)</string>
+    <string name="cat_akhway">A-Khway (Combo)</string>
+    <string name="cat_akhway_twins">A-Khway Twins</string>
+    <string name="cat_sone_sone">Even-Even</string>
+    <string name="cat_ma_ma">Odd-Odd</string>
+    <string name="cat_ma_sone">Odd-Even</string>
+    <string name="cat_sone_ma">Even-Odd</string>
 </resources>

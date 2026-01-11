@@ -22,25 +22,30 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: PickViewModel
     private lateinit var pickAdapter: PickAdapter
 
-    // Taxonomy of 2D codes mapped to localized strings
+    // Full 2D Taxonomy mapped to localized string resources
     private fun getLocalizedCategories(): List<Pair<String, String>> {
         return listOf(
-            getString(R.string.cat_direct) to "d",    // Direct
-            getString(R.string.cat_reverse) to "r",   // Ar (Reverse)
-            getString(R.string.cat_brake) to "b",     // Brake
-            getString(R.string.cat_power) to "p",     // Power
-            getString(R.string.cat_natkhat) to "n",   // Nat Khat
-            getString(R.string.cat_front) to "f",     // Hteik
-            getString(R.string.cat_tail) to "g",      // Nauk
-            getString(R.string.cat_running) to "t",    // Pat-thee
-            getString(R.string.cat_twins) to "a",     // A-puu
-            "A-Khway" to "k",                         // Combination
-            "Nyi-Ko" to "z"                           // Brother
+            getString(R.string.cat_direct) to "d",    // Direct (ဒွဲ)
+            getString(R.string.cat_reverse) to "r",   // Ar (အာ)
+            getString(R.string.cat_brake) to "b",     // Brake (ဘရိတ်)
+            getString(R.string.cat_power) to "p",     // Power (ပါဝါ)
+            getString(R.string.cat_natkhat) to "n",   // Nat Khat (နက္ခတ်)
+            getString(R.string.cat_front) to "f",     // Hteik (ထိပ်စည်း)
+            getString(R.string.cat_tail) to "g",      // Nauk (နောက်ပိတ်)
+            getString(R.string.cat_running) to "t",    // Pat-thee (ပတ်သီး)
+            getString(R.string.cat_twins) to "a",     // A-puu (အပူး)
+            getString(R.string.cat_brother) to "z",   // Nyi-Ko (ညီကို)
+            getString(R.string.cat_akhway) to "k",    // A-khway (အခွေ)
+            getString(R.string.cat_akhway_twins) to "e", // A-khway-puu (အခွေပူး)
+            getString(R.string.cat_sone_sone) to "c", // Even-Even (စုံစုံ)
+            getString(R.string.cat_ma_ma) to "v",     // Odd-Odd (မမ)
+            getString(R.string.cat_ma_sone) to "u",   // Odd-Even (မစုံ)
+            getString(R.string.cat_sone_ma) to "y"    // Even-Odd (စုံမ)
         )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Fix: Force Light Mode to prevent "Desktop/Dark Mode break"
+        // Fix: Force Light Mode to prevent UI colors from breaking
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         
         super.onCreate(savedInstanceState)
@@ -97,23 +102,22 @@ class MainActivity : AppCompatActivity() {
         if (name.isNotEmpty() && inputNum.isNotEmpty() && baseAmountStr.isNotEmpty()) {
             val baseAmount = baseAmountStr.toLongOrNull() ?: 0L
             
-            // Generate related numbers using the Logic Engine
+            // 1. Logic Engine generates all related 2D numbers
             val numbersToSave = LotteryEngine.expandCode(inputNum, categoryCode)
             
-            // Automatic Multiplication for the display toast
+            // 2. Automatic Money Multiplication
             val totalCost = baseAmount * numbersToSave.size
 
-            // Save each number into the database
+            // 3. Save each related number as a separate entry
             for (num in numbersToSave) {
                 viewModel.addPick(name, num, "2D", categoryCode, baseAmount.toString())
             }
 
-            // Clear inputs
             binding.etNumber.text?.clear()
             binding.etAmount.text?.clear()
 
-            // Feedback showing related number count and total money
-            val msg = "Saved ${numbersToSave.size} numbers. Total Amt: $totalCost"
+            // Toast feedback shows how many numbers were generated and total cost
+            val msg = "Saved ${numbersToSave.size} numbers. Total: $totalCost"
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
         } else {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
@@ -133,7 +137,7 @@ class MainActivity : AppCompatActivity() {
         config.setLocale(locale)
         baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
         
-        // Restart to apply language changes
+        // Restart activity to apply language update
         finish()
         startActivity(intent)
     }
