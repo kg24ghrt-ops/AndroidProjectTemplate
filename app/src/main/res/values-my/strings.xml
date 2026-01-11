@@ -1,7 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="save_success">မှတ်တမ်းတင်ပြီးပါပြီ။</string>
-    <string name="cat_direct">တိုက်ရိုက် (Direct)</string>
-    <string name="cat_brake">ဘရိတ် (Brake)</string>
-    <string name="cat_power">ပါဝါ (Power)</string>
-    </resources>
+    <string name="app_name">2D မှတ်တမ်း</string>
+    <string name="hint_name">အမည်</string>
+    <string name="hint_number">ဂဏန်း (2D)</string>
+    <string name="hint_amount">ငွေပမာဏ</string>
+    <string name="btn_save">သိမ်းဆည်းမည်</string>
+    <string name="btn_summary">အကျဉ်းချုပ်ကြည့်ရန်</string>
+    <string name="save_success">သိမ်းဆည်းပြီးပါပြီ။</string>
+
+    <string name="cat_direct">တိုက်ရိုက်</string>
+    <string name="cat_reverse">အာ (Reverse)</string>
+    <string name="cat_brake">ဘရိတ်</string>
+    <string name="cat_power">ပါဝါ</string>
+    <string name="cat_natkhat">နက္ခတ်</string>
+    <string name="cat_front">ထိပ်စည်း</string>
+    <string name="cat_tail">နောက်ပိတ်</string>
+    <string name="cat_running">ပတ်သီး</string>
+    <string name="cat_twins">အပူး</string>
+</resources>

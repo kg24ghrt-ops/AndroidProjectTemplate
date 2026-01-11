@@ -1,13 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MyLotto Tracker</string>
-    <string name="save_success">Entry Saved Successfully!</string>
+    <string name="app_name">2D Tracker</string>
+    <string name="hint_name">Person Name</string>
+    <string name="hint_number">Number (2D)</string>
+    <string name="hint_amount">Amount</string>
+    <string name="btn_save">Save Entry</string>
+    <string name="btn_summary">View Summary</string>
+    <string name="save_success">Saved Successfully!</string>
 
     <string name="cat_direct">Direct</string>
+    <string name="cat_reverse">Reverse (A)</string>
     <string name="cat_brake">Brake</string>
     <string name="cat_power">Power</string>
     <string name="cat_natkhat">Nat Khat</string>
-    <string name="cat_reverse">Reverse</string>
     <string name="cat_front">Front</string>
     <string name="cat_tail">Tail</string>
     <string name="cat_running">Running</string>
