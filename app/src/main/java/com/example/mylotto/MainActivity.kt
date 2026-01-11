@@ -18,9 +18,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: PickViewModel
     private lateinit var adapter: PickAdapter
 
-    // Complete Taxonomy from Research Paper
     private val categories = listOf(
-        "Direct (အပွင့်)" to "d",
+        "Direct" to "d",
         "ဘရိတ် (Brake)" to "b",
         "ပါဝါ (Power)" to "p",
         "နက္ခတ် (Nat Khat)" to "n",
@@ -28,19 +27,13 @@ class MainActivity : AppCompatActivity() {
         "ထိပ်စည်း (Front)" to "f",
         "နောက်ပိတ် (Tail)" to "g",
         "ပတ်သီး (Running)" to "t",
-        "အပူး (Twins)" to "a",
-        "ညီကို (Brother)" to "z",
-        "စုံစုံ (Even-Even)" to "c",
-        "မမ (Odd-Odd)" to "v",
-        "မစုံ (Odd-Even)" to "u",
-        "စုံမ (Even-Odd)" to "y"
+        "အပူး (Twins)" to "a"
     )
-
-    private val lotteryTypes = listOf("2D AM", "2D PM", "3D")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Initialize ViewBinding
+        
+        // Use ViewBinding to inflate layout
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -55,52 +48,39 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        // 1. Category Spinner Setup
-        val catAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories.map { it.first })
-        catAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spCategory.adapter = catAdapter
+        // Spinner
+        val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories.map { it.first })
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spCategory.adapter = spinnerAdapter
 
-        // 2. Lottery Type Spinner (Not in your previous code, but required by specs)
-        // Note: Ensure you have a Spinner with ID spType in your activity_main.xml or use a default
-        val typeAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, lotteryTypes)
-        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        // If spType isn't in XML yet, this line might need an XML update
-        // binding.spType.adapter = typeAdapter 
-
-        // 3. RecyclerView Setup
+        // RecyclerView
         adapter = PickAdapter(emptyList())
         binding.rvPicks.layoutManager = LinearLayoutManager(this)
         binding.rvPicks.adapter = adapter
 
-        // 4. Observe Data
+        // Data Observation
         viewModel.allPicks.observe(this) { picks ->
             adapter.updateData(picks)
         }
 
-        // 5. Save Action
+        // Save Click
         binding.btnSave.setOnClickListener {
-            val name = binding.etName.text.toString().trim()
-            val num = binding.etNumber.text.toString().trim()
-            val amt = binding.etAmount.text.toString().trim()
+            val name = binding.etName.text.toString()
+            val num = binding.etNumber.text.toString()
+            val amt = binding.etAmount.text.toString()
             val catCode = categories[binding.spCategory.selectedItemPosition].second
-            val type = lotteryTypes[0] // Default to 2D AM, or bind to a spinner
-
+            
             if (name.isNotEmpty() && num.isNotEmpty()) {
-                viewModel.addPick(name, num, type, catCode, amt)
-                
-                // Clear fields for next entry
+                viewModel.addPick(name, num, "2D", catCode, amt)
                 binding.etNumber.text?.clear()
                 binding.etAmount.text?.clear()
-                Toast.makeText(this, "Saved (သိမ်းဆည်းပြီး)", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Fill Name and Number", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Saved!", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // 6. Navigation to Result/Summary Screen
+        // Summary Click - Navigate to ResultActivity
         binding.btnSummary.setOnClickListener {
-            val intent = Intent(this, ResultActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, ResultActivity::class.java))
         }
     }
 }

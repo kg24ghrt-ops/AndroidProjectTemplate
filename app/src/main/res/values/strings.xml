@@ -1,4 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MyLotto</string>
-    <string name="str_title">로또 번호 생성기 6/45</string>
+    <string name="app_name">MyLotto Tracker</string>
+    <string name="person_name">Person Name (အမည်)</string>
+    <string name="number_code">Number/Code (ဂဏန်း)</string>
+    <string name="amount_label">Amount (ပမာဏ)</string>
+    <string name="save_btn">Save (သိမ်းဆည်းမည်)</string>
+    <string name="summary_btn">Summary (အကျဉ်းချုပ်)</string>
 </resources>

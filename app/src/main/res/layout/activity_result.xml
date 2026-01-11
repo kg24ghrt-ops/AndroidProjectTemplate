@@ -5,47 +5,29 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <Button
-        android:id="@+id/btnBack"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Back" />
-
     <TextView
         android:id="@+id/tvSummaryHeader"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Summary (အကျဉ်းချုပ်)"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:elevation="4dp">
-        <TextView
-            android:id="@+id/tvSummaryText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:text="Loading..." />
-    </androidx.cardview.widget.CardView>
+        android:text="Summary"
+        android:textSize="24sp" />
 
     <TextView
+        android:id="@+id/tvSummaryText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Pick List (မှတ်တမ်းများ)"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:text="Data goes here" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvResults"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="8dp" />
+        android:layout_weight="1" />
 
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Back" />
 </LinearLayout>

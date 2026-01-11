@@ -1,35 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Pick Entry (အသစ်ထည့်ရန်)"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Person Name (အမည်)">
-        <com.google.android.material.textfield.TextInputEditText android:id="@+id/etName" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        android:hint="Person Name">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="2">
+        android:layout_marginTop="8dp">
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Number/Code">
-            <com.google.android.material.textfield.TextInputEditText android:id="@+id/etNumber" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number"/>
+            android:hint="Number">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Spinner
@@ -42,22 +43,32 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Amount (e.g., 200r, 500p)">
-        <com.google.android.material.textfield.TextInputEditText android:id="@+id/etAmount" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        android:layout_marginTop="8dp"
+        android:hint="Amount">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save Pick (သိမ်းဆည်းမည်)"
-        android:layout_marginTop="12dp"/>
+        android:layout_marginTop="12dp"
+        android:text="Save Pick" />
+
+    <Button
+        android:id="@+id/btnSummary"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View Summary" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPicks"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="16dp"/>
-
+        android:layout_marginTop="16dp" />
 </LinearLayout>
