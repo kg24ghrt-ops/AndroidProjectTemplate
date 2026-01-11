@@ -1,8 +1,10 @@
 package com.example.mylotto
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -22,9 +24,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: PickViewModel
     private lateinit var pickAdapter: PickAdapter
 
-    /**
-     * Maps the 2D classification codes to localized strings.
-     */
     private fun getLocalizedCategories(): List<Pair<String, String>> {
         return listOf(
             getString(R.string.cat_direct) to "d",
@@ -47,14 +46,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Fix: Force Light Mode to avoid UI "Black on Black" text issues
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize Database and ViewModel
         val dao = AppDatabase.getDatabase(this).pickDao()
         viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
             override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
@@ -72,12 +68,19 @@ class MainActivity : AppCompatActivity() {
 
         updateSpinner()
 
-        // Setup RecyclerView for Voucher display
         pickAdapter = PickAdapter(emptyList())
-        binding.rvPicks.layoutManager = LinearLayoutManager(this)
+        binding.rvPicks.layoutManager = LinearLayoutManager(this).apply {
+            // Newest vouchers appear at the top
+            reverseLayout = false
+            stackFromEnd = false
+        }
         binding.rvPicks.adapter = pickAdapter
 
-        binding.btnSave.setOnClickListener { handleSave() }
+        binding.btnSave.setOnClickListener { 
+            handleSave() 
+            hideKeyboard() // UX Improvement
+        }
+
         binding.btnSummary.setOnClickListener {
             startActivity(Intent(this, ResultActivity::class.java))
         }
@@ -94,9 +97,6 @@ class MainActivity : AppCompatActivity() {
         binding.spCategory.adapter = spinnerAdapter
     }
 
-    /**
-     * Core Logic: Handles dynamic number expansion and money calculation.
-     */
     private fun handleSave() {
         val name = binding.etName.text.toString().trim()
         val inputNum = binding.etNumber.text.toString().trim()
@@ -109,30 +109,37 @@ class MainActivity : AppCompatActivity() {
         if (name.isNotEmpty() && inputNum.isNotEmpty() && amountStr.isNotEmpty()) {
             val baseAmount = amountStr.toLongOrNull() ?: 0L
             
-            // 1. Generate every single number for the voucher (e.g., A-khway logic)
+            if (baseAmount <= 0) {
+                Toast.makeText(this, "Amount must be greater than 0", Toast.LENGTH_SHORT).show()
+                return
+            }
+
             val expansion = LotteryEngine.expand(inputNum, categoryCode)
-            
-            // 2. Automatic Calculation: Base Amount x Total Numbers
             val totalCost = baseAmount * expansion.multiplier
 
-            // 3. FIXED: Using the exact parameter names from your PickViewModel: num, cat, amt
             viewModel.addPick(
                 name = name,
-                num = expansion.printableList, // printableList goes to 'num'
+                num = expansion.printableList, 
                 type = "2D",
-                cat = getString(getCategoryNameRes(categoryCode)), // category name goes to 'cat'
-                amt = totalCost.toString() // total cost goes to 'amt'
+                cat = getString(getCategoryNameRes(categoryCode)),
+                amt = totalCost.toString()
             )
 
-            // Clear Input fields
             binding.etNumber.text?.clear()
             binding.etAmount.text?.clear()
 
-            // Feedback
-            val msg = "Saved ${expansion.multiplier} numbers. Total: $totalCost Ks"
-            Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Saved ${expansion.multiplier} numbers. Total: $totalCost Ks", Toast.LENGTH_LONG).show()
         } else {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Helper to hide keyboard after saving
+    private fun hideKeyboard() {
+        val view = this.currentFocus
+        if (view != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 
@@ -167,8 +174,10 @@ class MainActivity : AppCompatActivity() {
     private fun setLocale(langCode: String) {
         val locale = Locale(langCode)
         Locale.setDefault(locale)
-        val config = Configuration()
+        val config = Configuration(resources.configuration)
         config.setLocale(locale)
+        
+        // Use createConfigurationContext for better compatibility
         baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
         
         finish()
@@ -176,6 +185,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        viewModel.allPicks.observe(this) { pickAdapter.updateData(it) }
+        viewModel.allPicks.observe(this) { 
+            pickAdapter.updateData(it) 
+            // Auto-scroll to the top when a new voucher is added
+            if (it.isNotEmpty()) binding.rvPicks.scrollToPosition(0)
+        }
     }
 }
