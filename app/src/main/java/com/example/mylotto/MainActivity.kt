@@ -1,6 +1,5 @@
 package com.example.mylotto
 
-import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -12,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mylotto.data.AppDatabase
 import com.example.mylotto.databinding.ActivityMainBinding
+import com.example.mylotto.logic.LotteryEngine
 import com.example.mylotto.ui.PickAdapter
 import com.example.mylotto.viewmodel.PickViewModel
 import java.util.Locale
@@ -22,25 +22,28 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: PickViewModel
     private lateinit var pickAdapter: PickAdapter
 
-    // The categories must be re-fetched after a language change
+    // Taxonomy of 2D codes mapped to localized strings
     private fun getLocalizedCategories(): List<Pair<String, String>> {
         return listOf(
-            getString(R.string.cat_direct) to "d",
-            getString(R.string.cat_reverse) to "r",
-            getString(R.string.cat_brake) to "b",
-            getString(R.string.cat_power) to "p",
-            getString(R.string.cat_natkhat) to "n",
-            getString(R.string.cat_front) to "f",
-            getString(R.string.cat_tail) to "g",
-            getString(R.string.cat_running) to "t",
-            getString(R.string.cat_twins) to "a"
+            getString(R.string.cat_direct) to "d",    // Direct
+            getString(R.string.cat_reverse) to "r",   // Ar (Reverse)
+            getString(R.string.cat_brake) to "b",     // Brake
+            getString(R.string.cat_power) to "p",     // Power
+            getString(R.string.cat_natkhat) to "n",   // Nat Khat
+            getString(R.string.cat_front) to "f",     // Hteik
+            getString(R.string.cat_tail) to "g",      // Nauk
+            getString(R.string.cat_running) to "t",    // Pat-thee
+            getString(R.string.cat_twins) to "a",     // A-puu
+            "A-Khway" to "k",                         // Combination
+            "Nyi-Ko" to "z"                           // Brother
         )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Fix: Force Light Mode to prevent "Desktop/Dark Mode break"
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        super.onCreate(savedInstanceState)
         
+        super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -57,10 +60,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        // --- Language Toggle Button ---
-        binding.btnLanguageToggle.setOnClickListener {
-            toggleLanguage()
-        }
+        binding.btnLanguageToggle.setOnClickListener { toggleLanguage() }
 
         updateSpinner()
 
@@ -85,10 +85,44 @@ class MainActivity : AppCompatActivity() {
         binding.spCategory.adapter = spinnerAdapter
     }
 
+    private fun handleSave() {
+        val name = binding.etName.text.toString().trim()
+        val inputNum = binding.etNumber.text.toString().trim()
+        val baseAmountStr = binding.etAmount.text.toString().trim()
+        
+        val categories = getLocalizedCategories()
+        val selectedIdx = binding.spCategory.selectedItemPosition
+        val categoryCode = categories[selectedIdx].second
+
+        if (name.isNotEmpty() && inputNum.isNotEmpty() && baseAmountStr.isNotEmpty()) {
+            val baseAmount = baseAmountStr.toLongOrNull() ?: 0L
+            
+            // Generate related numbers using the Logic Engine
+            val numbersToSave = LotteryEngine.expandCode(inputNum, categoryCode)
+            
+            // Automatic Multiplication for the display toast
+            val totalCost = baseAmount * numbersToSave.size
+
+            // Save each number into the database
+            for (num in numbersToSave) {
+                viewModel.addPick(name, num, "2D", categoryCode, baseAmount.toString())
+            }
+
+            // Clear inputs
+            binding.etNumber.text?.clear()
+            binding.etAmount.text?.clear()
+
+            // Feedback showing related number count and total money
+            val msg = "Saved ${numbersToSave.size} numbers. Total Amt: $totalCost"
+            Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+        } else {
+            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun toggleLanguage() {
         val currentLocale = resources.configuration.locales[0].language
         val newLang = if (currentLocale == "my") "en" else "my"
-        
         setLocale(newLang)
     }
 
@@ -97,31 +131,11 @@ class MainActivity : AppCompatActivity() {
         Locale.setDefault(locale)
         val config = Configuration()
         config.setLocale(locale)
-        
-        // Update the context with new locale
         baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
         
-        // Restart activity to apply changes globally
-        val intent = intent
+        // Restart to apply language changes
         finish()
         startActivity(intent)
-    }
-
-    private fun handleSave() {
-        val name = binding.etName.text.toString().trim()
-        val num = binding.etNumber.text.toString().trim()
-        val amt = binding.etAmount.text.toString().trim()
-        
-        val categories = getLocalizedCategories()
-        val selectedIdx = binding.spCategory.selectedItemPosition
-        val categoryCode = categories[selectedIdx].second
-
-        if (name.isNotEmpty() && num.isNotEmpty()) {
-            viewModel.addPick(name, num, "2D", categoryCode, amt)
-            binding.etNumber.text?.clear()
-            binding.etAmount.text?.clear()
-            Toast.makeText(this, "Success!", Toast.LENGTH_SHORT).show()
-        }
     }
 
     private fun setupObservers() {
