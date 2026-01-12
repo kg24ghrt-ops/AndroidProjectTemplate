@@ -2,7 +2,7 @@ package com.example.mylotto.logic
 
 /**
  * Myanmar 2D Lottery Engine
- * Handles canonical generation, set modification, and strict input validation.
+ * Architecture: Input Validation -> Base Set Generation -> Modifier Transformation -> Canonicalization
  */
 object LotteryEngine {
 
@@ -17,28 +17,28 @@ object LotteryEngine {
     }
 
     /**
-     * Expands shorthand codes into 2D number sets.
-     * Logic Flow: Validation -> Generation -> Modification -> Canonicalization
+     * Entry point for expansion logic.
      */
     fun expand(input: String, code: String): ExpansionResult {
-        val lowerCode = code.lowercase()
+        val lowerCode = code.lowercase().trim()
         
-        // 1. Identify Modifiers (Suffixes like 'r')
-        val isReverseModifier = lowerCode.endsWith("r")
-        val baseCode = if (isReverseModifier && lowerCode.length > 1) {
+        // 1. Identify Modifiers (Suffixes)
+        // Check if 'r' is present at the end of the code string
+        val hasReverseModifier = lowerCode.endsWith("r")
+        val baseGeneratorCode = if (hasReverseModifier && lowerCode.length > 1) {
             lowerCode.dropLast(1)
         } else {
             lowerCode
         }
 
         // 2. Strict Input Validation
-        val validationError = validateInput(input, baseCode)
+        val validationError = validateInput(input, baseGeneratorCode)
         if (validationError != null) return ExpansionResult.Invalid(validationError)
 
         val cleanDigits = input.filter { it.isDigit() }
 
-        // 3. Generator Phase
-        var resultSet: Set<String> = when (baseCode) {
+        // 3. Base Generation Phase
+        var resultSet: Set<String> = when (baseGeneratorCode) {
             "b" -> generateBrake(cleanDigits)
             "f" -> generateFront(cleanDigits)
             "g" -> generateBack(cleanDigits)
@@ -47,28 +47,29 @@ object LotteryEngine {
             "p" -> generatePower()
             "n" -> generateNatKhat()
             "z", "x" -> generateBrother()
-            "c" -> generateParity(firstEven = true, secondEven = true)
-            "v" -> generateParity(firstEven = false, secondEven = false)
-            "u" -> generateParity(firstEven = false, secondEven = true)
-            "y" -> generateParity(firstEven = true, secondEven = false)
+            "c" -> generateParity(firstEven = true, secondEven = true)   // Sone-Sone
+            "v" -> generateParity(firstEven = false, secondEven = false) // Ma-Ma
+            "u" -> generateParity(firstEven = false, secondEven = true)  // Ma-Sone
+            "y" -> generateParity(firstEven = true, secondEven = false)  // Sone-Ma
             "k" -> generateKhway(cleanDigits, includeDoubles = false)
             "e" -> generateKhway(cleanDigits, includeDoubles = true)
-            "r" -> if (cleanDigits.length == 2) setOf(cleanDigits) else emptySet()
             "d" -> if (cleanDigits.length == 2) setOf(cleanDigits) else emptySet()
+            // 'r' is handled as a modifier, but if used alone with 2 digits, treat as Direct + Reverse
+            "r" -> if (cleanDigits.length == 2) setOf(cleanDigits) else emptySet()
             else -> if (cleanDigits.length == 2) setOf(cleanDigits) else emptySet()
         }
 
-        // Final safety check for generators that failed to produce output
         if (resultSet.isEmpty()) {
-            return ExpansionResult.Invalid("Calculation error: No numbers generated.")
+            return ExpansionResult.Invalid("Please enter a valid digit for this category.")
         }
 
-        // 4. Modifier Phase (Apply Reverse if applicable)
-        if (isReverseModifier || lowerCode == "r") {
+        // 4. Modifier Phase (Apply Reverse)
+        // Apply if code is 'r' or ends with 'r' (like 'br', 'kr', 'dr')
+        if (hasReverseModifier || lowerCode == "r") {
             resultSet = applyReverse(resultSet)
         }
 
-        // 5. Canonicalization (Deduplication and Sorting)
+        // 5. Canonicalization (Deduplication + Sorting)
         val sortedList = resultSet.toList().sorted()
         
         return ExpansionResult.Success(
@@ -80,24 +81,23 @@ object LotteryEngine {
 
     private fun validateInput(input: String, code: String): String? {
         val digitsOnly = input.all { it.isDigit() }
-        if (!digitsOnly) return "Input must contain digits only"
+        if (!digitsOnly && input.isNotEmpty()) return "Input must contain digits only."
 
         return when (code) {
-            "d" -> if (input.length != 2) "Direct requires exactly 2 digits" else null
-            "b" -> if (input.length != 1) "Brake requires exactly 1 digit" else null
-            "f", "g", "t" -> if (input.length != 1) "Requires exactly 1 digit" else null
+            "d", "r" -> if (input.length != 2) "Requires exactly 2 digits." else null
+            "b" -> if (input.length != 1) "Brake requires exactly 1 digit." else null
+            "f", "g", "t" -> if (input.length != 1) "Requires exactly 1 digit (0-9)." else null
             "k", "e" -> {
-                val distinct = input.filter { it.isDigit() }.toSet()
-                if (distinct.size < 2) "Requires at least 2 distinct digits" else null
+                val distinctCount = input.toSet().size
+                if (distinctCount < 2) "Requires at least 2 different digits." else null
             }
-            "r" -> if (input.length != 2) "Reverse requires 2 digits" else null
-            // Generators that do not require input
-            "a", "p", "n", "z", "x", "c", "v", "u", "y" -> null 
-            else -> if (input.length < 1) "Please enter a digit" else null
+            // Fixed sets that require no input
+            "a", "p", "n", "z", "x", "c", "v", "u", "y" -> null
+            else -> if (input.isEmpty()) "Input field cannot be empty." else null
         }
     }
 
-    // --- Dynamic Generators ---
+    // --- GENERATORS ---
 
     private fun generateBrake(input: String): Set<String> {
         val target = input.toIntOrNull() ?: return emptySet()
@@ -116,13 +116,15 @@ object LotteryEngine {
         return res
     }
 
+    /**
+     * Matches any 2D number containing the input digit in any position.
+     */
     private fun generateRunning(input: String) = (0..99).map { it.toString().padStart(2, '0') }
         .filter { it.contains(input) }.toSet()
 
     private fun generateFront(input: String) = (0..9).map { "$input$it" }.toSet()
-
     private fun generateBack(input: String) = (0..9).map { "$it$input" }.toSet()
-
+    
     private fun generateBrother(): Set<String> {
         val res = mutableSetOf<String>()
         for (i in 0..9) {
@@ -141,7 +143,7 @@ object LotteryEngine {
     private fun generateNatKhat() = setOf("18", "81", "24", "42", "39", "93", "05", "50", "67", "76")
     private fun generateAllDoubles() = (0..9).map { "$it$it" }.toSet()
 
-    // --- Modifiers ---
+    // --- MODIFIERS ---
 
     private fun applyReverse(baseSet: Set<String>): Set<String> {
         val res = mutableSetOf<String>()
