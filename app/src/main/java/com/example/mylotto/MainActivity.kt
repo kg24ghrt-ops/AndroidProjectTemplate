@@ -201,4 +201,6 @@ class MainActivity : AppCompatActivity() {
             if (it.isNotEmpty()) binding.rvPicks.scrollToPosition(0)
         }
     }
+
+
 }
