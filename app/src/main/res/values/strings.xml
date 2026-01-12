@@ -20,4 +20,10 @@
     <string name="cat_ma_ma">Odd-Odd (Ma-Ma)</string>
     <string name="cat_ma_sone">Odd-Even (Ma-Sone)</string>
     <string name="cat_sone_ma">Even-Odd (Sone-Ma)</string>
+
+    <string name="hint_name">Customer Name</string>
+    <string name="hint_number">Enter Number or Code</string>
+    <string name="hint_amount">Amount (Ks)</string>
+    <string name="label_category">Select Category</string>
+    <string name="total_amount">Total: %s Ks</string>
 </resources>

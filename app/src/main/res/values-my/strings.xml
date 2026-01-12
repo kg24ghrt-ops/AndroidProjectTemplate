@@ -20,4 +20,10 @@
     <string name="cat_ma_ma">မမ</string>
     <string name="cat_ma_sone">မစုံ</string>
     <string name="cat_sone_ma">စုံမ</string>
+
+    <string name="hint_name">ဝယ်သူအမည်</string>
+    <string name="hint_number">ဂဏန်း သို့မဟုတ် ကုဒ်ရိုက်ပါ</string>
+    <string name="hint_amount">ထိုးကြေး (ကျပ်)</string>
+    <string name="label_category">အမျိုးအစားရွေးပါ</string>
+    <string name="total_amount">စုစုပေါင်း: %s ကျပ်</string>
 </resources>
