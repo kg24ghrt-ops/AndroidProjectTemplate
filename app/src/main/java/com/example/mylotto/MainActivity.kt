@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.cat_akhway) to "k",
             getString(R.string.cat_akhway_twins) to "e",
             getString(R.string.cat_sone_sone) to "c",
-            getString(R.string.cat_ma_ma) to "v",
+            getString(R.string.cat_ma_ma) to "v", // Fixed identifier
             getString(R.string.cat_ma_sone) to "u",
             getString(R.string.cat_sone_ma) to "y"
         )
@@ -65,14 +65,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupUI() {
         binding.btnLanguageToggle.setOnClickListener { toggleLanguage() }
-
         updateSpinner()
 
         pickAdapter = PickAdapter(emptyList())
-        binding.rvPicks.layoutManager = LinearLayoutManager(this).apply {
-            reverseLayout = false
-            stackFromEnd = false
-        }
+        binding.rvPicks.layoutManager = LinearLayoutManager(this)
         binding.rvPicks.adapter = pickAdapter
 
         binding.btnSave.setOnClickListener { 
@@ -103,9 +99,10 @@ class MainActivity : AppCompatActivity() {
         
         val categories = getLocalizedCategories()
         val selectedIdx = binding.spCategory.selectedItemPosition
+        if (selectedIdx < 0) return
+        
         val categoryCode = categories[selectedIdx].second
 
-        // Basic check for Name and Amount
         if (name.isEmpty() || amountStr.isEmpty()) {
             Toast.makeText(this, "Please fill Name and Amount", Toast.LENGTH_SHORT).show()
             return
@@ -117,14 +114,9 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        // Process through the Engine
-        val result = LotteryEngine.expand(inputNum, categoryCode)
-
-        // Handle the Sealed Class states (Success vs Invalid)
-        when (result) {
+        when (val result = LotteryEngine.expand(inputNum, categoryCode)) {
             is LotteryEngine.ExpansionResult.Success -> {
                 val totalCost = baseAmount * result.multiplier
-
                 viewModel.addPick(
                     name = name,
                     num = result.printableList, 
@@ -132,27 +124,14 @@ class MainActivity : AppCompatActivity() {
                     cat = getString(getCategoryNameRes(categoryCode)),
                     amt = totalCost.toString()
                 )
-
-                // Success cleanup
                 binding.etNumber.text?.clear()
                 binding.etAmount.text?.clear()
                 binding.etNumber.error = null 
-
-                Toast.makeText(this, "Saved ${result.multiplier} numbers. Total: $totalCost Ks", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Saved ${result.multiplier} numbers.", Toast.LENGTH_SHORT).show()
             }
             is LotteryEngine.ExpansionResult.Invalid -> {
-                // Display specific validation error from the engine
                 binding.etNumber.error = result.message
-                Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
             }
-        }
-    }
-
-    private fun hideKeyboard() {
-        val view = this.currentFocus
-        if (view != null) {
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 
@@ -171,10 +150,18 @@ class MainActivity : AppCompatActivity() {
             "k" -> R.string.cat_akhway
             "e" -> R.string.cat_akhway_twins
             "c" -> R.string.cat_sone_sone
-            "v" -> R.string.cat_ma_ ma
+            "v" -> R.string.cat_ma_ma // Fixed syntax error
             "u" -> R.string.cat_ma_sone
             "y" -> R.string.cat_sone_ma
             else -> R.string.cat_direct
+        }
+    }
+
+    private fun hideKeyboard() {
+        val view = this.currentFocus
+        if (view != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 
@@ -190,7 +177,6 @@ class MainActivity : AppCompatActivity() {
         val config = Configuration(resources.configuration)
         config.setLocale(locale)
         baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
-        
         finish()
         startActivity(intent)
     }
@@ -201,6 +187,4 @@ class MainActivity : AppCompatActivity() {
             if (it.isNotEmpty()) binding.rvPicks.scrollToPosition(0)
         }
     }
-
-
 }
