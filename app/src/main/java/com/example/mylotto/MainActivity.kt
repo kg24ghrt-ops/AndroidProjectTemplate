@@ -70,7 +70,6 @@ class MainActivity : AppCompatActivity() {
 
         pickAdapter = PickAdapter(emptyList())
         binding.rvPicks.layoutManager = LinearLayoutManager(this).apply {
-            // Newest vouchers appear at the top
             reverseLayout = false
             stackFromEnd = false
         }
@@ -78,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnSave.setOnClickListener { 
             handleSave() 
-            hideKeyboard() // UX Improvement
+            hideKeyboard() 
         }
 
         binding.btnSummary.setOnClickListener {
@@ -106,35 +105,49 @@ class MainActivity : AppCompatActivity() {
         val selectedIdx = binding.spCategory.selectedItemPosition
         val categoryCode = categories[selectedIdx].second
 
-        if (name.isNotEmpty() && inputNum.isNotEmpty() && amountStr.isNotEmpty()) {
-            val baseAmount = amountStr.toLongOrNull() ?: 0L
-            
-            if (baseAmount <= 0) {
-                Toast.makeText(this, "Amount must be greater than 0", Toast.LENGTH_SHORT).show()
-                return
+        // Basic check for Name and Amount
+        if (name.isEmpty() || amountStr.isEmpty()) {
+            Toast.makeText(this, "Please fill Name and Amount", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val baseAmount = amountStr.toLongOrNull() ?: 0L
+        if (baseAmount <= 0) {
+            Toast.makeText(this, "Amount must be greater than 0", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Process through the Engine
+        val result = LotteryEngine.expand(inputNum, categoryCode)
+
+        // Handle the Sealed Class states (Success vs Invalid)
+        when (result) {
+            is LotteryEngine.ExpansionResult.Success -> {
+                val totalCost = baseAmount * result.multiplier
+
+                viewModel.addPick(
+                    name = name,
+                    num = result.printableList, 
+                    type = "2D",
+                    cat = getString(getCategoryNameRes(categoryCode)),
+                    amt = totalCost.toString()
+                )
+
+                // Success cleanup
+                binding.etNumber.text?.clear()
+                binding.etAmount.text?.clear()
+                binding.etNumber.error = null 
+
+                Toast.makeText(this, "Saved ${result.multiplier} numbers. Total: $totalCost Ks", Toast.LENGTH_LONG).show()
             }
-
-            val expansion = LotteryEngine.expand(inputNum, categoryCode)
-            val totalCost = baseAmount * expansion.multiplier
-
-            viewModel.addPick(
-                name = name,
-                num = expansion.printableList, 
-                type = "2D",
-                cat = getString(getCategoryNameRes(categoryCode)),
-                amt = totalCost.toString()
-            )
-
-            binding.etNumber.text?.clear()
-            binding.etAmount.text?.clear()
-
-            Toast.makeText(this, "Saved ${expansion.multiplier} numbers. Total: $totalCost Ks", Toast.LENGTH_LONG).show()
-        } else {
-            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
+            is LotteryEngine.ExpansionResult.Invalid -> {
+                // Display specific validation error from the engine
+                binding.etNumber.error = result.message
+                Toast.makeText(this, result.message, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
-    // Helper to hide keyboard after saving
     private fun hideKeyboard() {
         val view = this.currentFocus
         if (view != null) {
@@ -158,7 +171,7 @@ class MainActivity : AppCompatActivity() {
             "k" -> R.string.cat_akhway
             "e" -> R.string.cat_akhway_twins
             "c" -> R.string.cat_sone_sone
-            "v" -> R.string.cat_ma_ma
+            "v" -> R.string.cat_ma_ ma
             "u" -> R.string.cat_ma_sone
             "y" -> R.string.cat_sone_ma
             else -> R.string.cat_direct
@@ -176,8 +189,6 @@ class MainActivity : AppCompatActivity() {
         Locale.setDefault(locale)
         val config = Configuration(resources.configuration)
         config.setLocale(locale)
-        
-        // Use createConfigurationContext for better compatibility
         baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
         
         finish()
@@ -187,7 +198,6 @@ class MainActivity : AppCompatActivity() {
     private fun setupObservers() {
         viewModel.allPicks.observe(this) { 
             pickAdapter.updateData(it) 
-            // Auto-scroll to the top when a new voucher is added
             if (it.isNotEmpty()) binding.rvPicks.scrollToPosition(0)
         }
     }
