@@ -8,7 +8,6 @@ object LotteryEngine {
     )
 
     fun expand(input: String, code: String): ExpansionResult {
-        // Pool of all 100 numbers for logic that requires filtering
         val all2D = (0..99).map { it.toString().padStart(2, '0') }
         
         val resultList: List<String> = when (code.lowercase()) {
@@ -18,25 +17,29 @@ object LotteryEngine {
                 all2D.filter { (it[0].digitToInt() + it[1].digitToInt()) % 10 == target }
             }
 
-            // A-KHWAY (k) အခွေ: Full round bet from digit set
+            // 1. A-KHWAY (k) - NO DOUBLE DIGITS
+            // Input "123" -> 12, 13, 21, 23, 31, 32 (Multiplier: 6)
             "k" -> {
                 val digits = input.filter { it.isDigit() }.map { it.toString() }.distinct()
                 val res = mutableListOf<String>()
                 for (d1 in digits) {
                     for (d2 in digits) {
-                        res.add("$d1$d2")
+                        if (d1 != d2) { // Logic fix: Skip doubles
+                            res.add("$d1$d2")
+                        }
                     }
                 }
                 res.sorted()
             }
 
-            // A-KHWAY-PUU (e) အခွေပူး: ONLY the "အပူး" (doubles) from the digit set
+            // 2. A-KHWAY-PUU (e) - ONLY DOUBLE DIGITS
+            // Input "123" -> 11, 22, 33 (Multiplier: 3)
             "e" -> {
                 val digits = input.filter { it.isDigit() }.map { it.toString() }.distinct()
                 digits.map { "$it$it" }.sorted()
             }
 
-            // TWINS အပူး (a): The fixed set of all 10 doubles
+            // TWINS / အပူး (a): The standard set of all 10 doubles
             "a" -> (0..9).map { "$it$it" }
 
             else -> listOf(input)
