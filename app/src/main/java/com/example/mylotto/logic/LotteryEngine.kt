@@ -2,79 +2,103 @@ package com.example.mylotto.logic
 
 object LotteryEngine {
 
-    data class ExpansionResult(
-        val numbers: Set<String>,
-        val printableList: String,
-        val multiplier: Int
-    )
+    sealed class ExpansionResult {
+        data class Success(
+            val numbers: Set<String>,
+            val printableList: String,
+            val multiplier: Int
+        ) : ExpansionResult()
 
-    /**
-     * The main entry point for expanding bets.
-     */
+        data class Invalid(val message: String) : ExpansionResult()
+    }
+
     fun expand(input: String, code: String): ExpansionResult {
-        // Step 1: Validation
-        val cleanInput = input.filter { it.isDigit() }
-        if (cleanInput.isEmpty() && !isFixedGenerator(code)) {
-            return ExpansionResult(emptySet(), "", 0)
+        // 1. STRICT INPUT VALIDATION
+        val validationError = validateInput(input, code)
+        if (validationError != null) return ExpansionResult.Invalid(validationError)
+
+        val cleanDigits = input.filter { it.isDigit() }
+
+        // 2. GENERATOR PHASE
+        // Identify if 'r' is present as a modifier suffix (e.g., "5br")
+        val isReverseModifier = code.lowercase().endsWith("r")
+        val baseCode = if (isReverseModifier && code.length > 1) {
+            code.lowercase().dropLast(1)
+        } else {
+            code.lowercase()
         }
 
-        // Step 2: Generation (Sets created from 00-99)
-        var resultSet: Set<String> = when (code.lowercase()) {
-            "b" -> generateBrake(cleanInput)
-            "f" -> generateFront(cleanInput)
-            "g" -> generateBack(cleanInput)
-            "t" -> generateRunning(cleanInput)
+        var resultSet: Set<String> = when (baseCode) {
+            "b" -> generateBrake(cleanDigits)
+            "f" -> generateFront(cleanDigits)
+            "g" -> generateBack(cleanDigits)
+            "t" -> generateRunning(cleanDigits)
             "a" -> generateAllDoubles()
             "p" -> generatePower()
             "n" -> generateNatKhat()
             "z", "x" -> generateBrother()
-            "c" -> generateParity(evenFirst = true, evenSecond = true)  // Sone-Sone
-            "v" -> generateParity(evenFirst = false, evenSecond = false) // Ma-Ma
-            "u" -> generateParity(evenFirst = false, evenSecond = true)  // Ma-Sone
-            "y" -> generateParity(evenFirst = true, evenSecond = false)  // Sone-Ma
-            "k" -> generateKhway(cleanInput, includeDoubles = false)
-            "e" -> generateKhway(cleanInput, includeDoubles = true)
-            else -> setOf(cleanInput.padStart(2, '0')).filter { it.length == 2 }.toSet()
+            "c" -> generateParity(firstEven = true, secondEven = true)
+            "v" -> generateParity(firstEven = false, secondEven = false)
+            "u" -> generateParity(firstEven = false, secondEven = true)
+            "y" -> generateParity(firstEven = true, secondEven = false)
+            "k" -> generateKhway(cleanDigits, includeDoubles = false)
+            "e" -> generateKhway(cleanDigits, includeDoubles = true)
+            "r" -> if (cleanDigits.length == 2) setOf(cleanDigits) else emptySet()
+            else -> if (cleanDigits.length == 2) setOf(cleanDigits) else emptySet()
         }
 
-        // Step 3: Modifiers (Transformation phase)
-        // Note: r (Reverse) can be triggered by code or specific UI flags
-        if (code.lowercase() == "r") {
+        if (resultSet.isEmpty() && baseCode !in listOf("a", "p", "n", "z", "x", "c", "v", "u", "y")) {
+            return ExpansionResult.Invalid("No numbers generated from input")
+        }
+
+        // 3. MODIFIER PHASE (Composability)
+        if (isReverseModifier || code.lowercase() == "r") {
             resultSet = applyReverse(resultSet)
         }
 
-        // Step 4: Canonicalization
+        // 4. CANONICALIZATION
         val sortedList = resultSet.toList().sorted()
-        
-        return ExpansionResult(
+        return ExpansionResult.Success(
             numbers = resultSet,
             printableList = sortedList.joinToString(", "),
             multiplier = resultSet.size
         )
     }
 
-    // --- GENERATORS ---
+    private fun validateInput(input: String, code: String): String? {
+        val baseCode = code.lowercase().replace("r", "")
+        val digitsOnly = input.all { it.isDigit() }
+
+        if (input.isEmpty() && baseCode !in listOf("a", "p", "n", "z", "x", "c", "v", "u", "y")) {
+            return "Input cannot be empty"
+        }
+        if (!digitsOnly) return "Input must contain digits only"
+        
+        return when (baseCode) {
+            "b" -> if (input.length != 1) "Brake must be exactly 1 digit" else null
+            "f", "g", "t" -> if (input.length != 1) "Generator requires 1 digit" else null
+            "k", "e" -> if (input.length < 2) "Khway requires at least 2 digits" else null
+            "" -> if (code.lowercase() == "r" && input.length != 2) "Direct reverse requires 2 digits" else null
+            else -> null
+        }
+    }
+
+    // --- DYNAMIC GENERATORS ---
 
     private fun generateBrake(input: String): Set<String> {
-        val target = input.firstOrNull()?.digitToInt() ?: return emptySet()
+        val target = input.toInt()
         return (0..99).map { it.toString().padStart(2, '0') }
             .filter { (it[0].digitToInt() + it[1].digitToInt()) % 10 == target }.toSet()
     }
 
-    private fun generateFront(input: String): Set<String> {
-        val digit = input.firstOrNull() ?: return emptySet()
-        return (0..9).map { "$digit$it" }.toSet()
-    }
-
-    private fun generateBack(input: String): Set<String> {
-        val digit = input.firstOrNull() ?: return emptySet()
-        return (0..9).map { "$it$digit" }.toSet()
-    }
-
-    private fun generateRunning(input: String): Set<String> {
-        val digit = input.firstOrNull() ?: return emptySet()
-        return (0..99).map { it.toString().padStart(2, '0') }
-            .filter { it.contains(digit) }.toSet()
+    private fun generateBrother(): Set<String> {
+        val res = mutableSetOf<String>()
+        for (i in 0..9) {
+            val next = (i + 1) % 10
+            res.add("$i$next")
+            res.add("$next$i")
+        }
+        return res
     }
 
     private fun generateKhway(input: String, includeDoubles: Boolean): Set<String> {
@@ -88,35 +112,25 @@ object LotteryEngine {
         return res
     }
 
+    private fun generateRunning(input: String) = (0..99).map { it.toString().padStart(2, '0') }
+        .filter { it.contains(input) }.toSet()
+
+    private fun generateFront(input: String) = (0..9).map { "$input$it" }.toSet()
+    private fun generateBack(input: String) = (0..9).map { "$it$input" }.toSet()
     private fun generatePower() = setOf("05", "50", "16", "61", "27", "72", "38", "83", "49", "94")
-
     private fun generateNatKhat() = setOf("18", "81", "24", "42", "39", "93", "05", "50", "67", "76")
-
-    private fun generateBrother() = setOf(
-        "01", "12", "23", "34", "45", "56", "67", "78", "89", "90",
-        "10", "21", "32", "43", "54", "65", "76", "87", "98", "09"
-    )
-
-    private fun generateParity(evenFirst: Boolean, evenSecond: Boolean): Set<String> {
-        return (0..99).map { it.toString().padStart(2, '0') }.filter { num ->
-            val firstEven = num[0].digitToInt() % 2 == 0
-            val secondEven = num[1].digitToInt() % 2 == 0
-            (firstEven == evenFirst) && (secondEven == evenSecond)
-        }.toSet()
-    }
-
     private fun generateAllDoubles() = (0..9).map { "$it$it" }.toSet()
+    private fun generateParity(firstEven: Boolean, secondEven: Boolean) = (0..99)
+        .map { it.toString().padStart(2, '0') }
+        .filter { (it[0].digitToInt() % 2 == 0) == firstEven && (it[1].digitToInt() % 2 == 0) == secondEven }.toSet()
 
     // --- MODIFIERS ---
-
     private fun applyReverse(baseSet: Set<String>): Set<String> {
-        val reversed = mutableSetOf<String>()
+        val res = mutableSetOf<String>()
         baseSet.forEach {
-            reversed.add(it)
-            reversed.add(it.reversed())
+            res.add(it)
+            res.add(it.reversed())
         }
-        return reversed
+        return res
     }
-
-    private fun isFixedGenerator(code: String) = code.lowercase() in listOf("a", "p", "n", "z", "x", "c", "v", "u", "y")
 }
