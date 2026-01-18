@@ -27,6 +27,7 @@ class MarketingAttributionService(private val context: Context) {
     /**
      * Starts the connection with the install referrer and handle the response.
      */
+    @Suppress("CognitiveComplexMethod")
     fun start() {
     }
 

@@ -4,6 +4,7 @@
 
 package org.mozilla.fenix.settings
 
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
@@ -14,7 +15,6 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
-import org.mozilla.fenix.Config
 import org.mozilla.fenix.FeatureFlags
 import org.mozilla.fenix.GleanMetrics.AppTheme
 import org.mozilla.fenix.GleanMetrics.CustomizationSettings
@@ -66,7 +66,7 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         updateToolbarCategoryBasedOnTabStrip(tabletAndTabStripEnabled)
         setupTabStripCategory()
         setupToolbarLayout()
-        updateToolbarShortcutBasedOnLayout()
+        updateToolbarShortcut()
 
         // if tab strip is enabled, swipe toolbar to switch tabs should not be enabled so the
         // preference is not shown
@@ -98,19 +98,36 @@ class CustomizationFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun updateToolbarShortcutBasedOnLayout() {
+    private fun updateToolbarShortcut() {
         val category = requirePreference<PreferenceCategory>(
             R.string.pref_key_customization_category_toolbar_shortcut,
         )
         val settings = requireContext().settings()
+        val isExpandedToolbarEnabled = settings.shouldUseExpandedToolbar && isTallWindow() && !isWideWindow()
+        val shouldShowShortcutCategory = settings.shouldShowToolbarCustomization &&
+                settings.shouldUseComposableToolbar &&
+                settings.toolbarRedesignEnabled
 
-        category.isVisible =
-            settings.shouldShowToolbarCustomization &&
-                    Config.channel.isNightlyOrDebug &&
-                    settings.shouldUseComposableToolbar &&
-                    settings.toolbarRedesignEnabled &&
-                    isTallWindow() &&
-                    !settings.shouldUseExpandedToolbar
+        category.isVisible = shouldShowShortcutCategory
+        if (shouldShowShortcutCategory) {
+            val shortcutPreference = if (isExpandedToolbarEnabled) {
+                ToolbarExpandedShortcutPreference(requireContext()).apply {
+                    key = getString(R.string.pref_key_toolbar_expanded_shortcut)
+                    layoutResource = R.layout.preference_toolbar_shortcut
+                }
+            } else {
+                ToolbarSimpleShortcutPreference(requireContext()).apply {
+                    key = getString(R.string.pref_key_toolbar_simple_shortcut)
+                    layoutResource = R.layout.preference_toolbar_shortcut
+                }
+            }
+            category.apply {
+                removeAll()
+                addPreference(shortcutPreference)
+                val shortcutOptions = shortcutPreference.getShortcutOptions()
+                shortcutOptions.forEach(::addPreference)
+            }
+        }
     }
 
     private fun setupRadioGroups() {
@@ -235,7 +252,7 @@ class CustomizationFragment : PreferenceFragmentCompat() {
 
         val layoutToggle = requirePreference<ToggleRadioButtonPreference>(R.string.pref_key_toolbar_expanded)
         layoutToggle.setOnToggleChanged {
-            updateToolbarShortcutBasedOnLayout()
+            updateToolbarShortcut()
         }
         updateToolbarLayoutIcons()
     }
@@ -329,6 +346,12 @@ class CustomizationFragment : PreferenceFragmentCompat() {
             }
         }
         return super.onPreferenceTreeClick(preference)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        setupToolbarLayout()
+        updateToolbarShortcut()
     }
 
     companion object {

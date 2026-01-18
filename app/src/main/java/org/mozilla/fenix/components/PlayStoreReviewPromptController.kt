@@ -12,13 +12,13 @@ import com.google.android.play.core.review.ReviewManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import mozilla.components.support.base.log.logger.Logger
-import org.mozilla.fenix.BrowserDirection
 import org.mozilla.fenix.GleanMetrics.ReviewPrompt
-import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.components.ReviewPromptAttemptResult.Displayed
 import org.mozilla.fenix.components.ReviewPromptAttemptResult.Error
 import org.mozilla.fenix.components.ReviewPromptAttemptResult.NotDisplayed
 import org.mozilla.fenix.components.ReviewPromptAttemptResult.Unknown
+import org.mozilla.fenix.ext.components
+import org.mozilla.fenix.ext.openToBrowser
 import org.mozilla.fenix.settings.SupportUtils
 import java.text.SimpleDateFormat
 import java.util.Date

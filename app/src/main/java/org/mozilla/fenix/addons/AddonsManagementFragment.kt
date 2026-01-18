@@ -239,6 +239,7 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
         binding = null
     }
 
+    @Suppress("CognitiveComplexMethod")
     private fun bindRecyclerView() {
         logger.info("Binding recycler view for AddonsManagementFragment")
 
@@ -383,11 +384,9 @@ class AddonsManagementFragment : Fragment(R.layout.fragment_add_ons_management) 
 
     private fun openAMO() {
         findNavController().openToBrowser()
-        val isPrivate = requireComponents.appStore.state.mode.isPrivate
         requireComponents.useCases.fenixBrowserUseCases.loadUrlOrSearch(
             searchTermOrURL = AMO_HOMEPAGE_FOR_ANDROID,
             newTab = true,
-            private = isPrivate,
         )
     }
 }
