@@ -30,7 +30,7 @@ abstract class ApplicationServicesVersionSource implements ValueSource<String, A
         }
         // Extract from a generated .kt file
         def topsrcdir = parameters.topsrcdir.get()
-        def appServicesFile = new File(topsrcdir, "mobile/android/android-components/plugins/dependencies/src/main/java/ApplicationServices.kt")
+        def appServicesFile = new File(topsrcdir, "/android-components/plugins/dependencies/src/main/java/ApplicationServices.kt")
         def versionLine = appServicesFile.readLines().find { it.startsWith("val VERSION = ") }
         if (versionLine) {
             // Extract version from: val VERSION = "143.20250816050436"
