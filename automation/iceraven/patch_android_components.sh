@@ -25,4 +25,4 @@ python automation/iceraven/toolkit/crashreporter/generate_crash_reporter_sources
 mkdir -p netwerk/dns
 version=$(sed 's/\./_/g' version.txt)
 tag=FIREFOX-ANDROID_${version}_RELEASE
-wget https://raw.githubusercontent.com/mozilla-firefox/firefox/refs/tags/${tag}/netwerk/dns/effective_tld_names.dat -O network/dns/effective_tld_names.dat
+wget https://raw.githubusercontent.com/mozilla-firefox/firefox/refs/tags/${tag}/netwerk/dns/effective_tld_names.dat -O netwerk/dns/effective_tld_names.dat
