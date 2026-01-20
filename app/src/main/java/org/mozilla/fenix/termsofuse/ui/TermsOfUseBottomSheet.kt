@@ -4,7 +4,6 @@
 
 package org.mozilla.fenix.termsofuse.ui
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -197,21 +196,6 @@ private fun BottomSheetContent(
                 onDismiss()
             }
         }
-
-        TextButton(
-            modifier = Modifier.fillMaxWidth(),
-            border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outline),
-            text = stringResource(R.string.terms_of_use_prompt_postpone),
-            onClick = {
-                onRemindMeLaterClicked()
-
-                coroutineScope.launch {
-                    sheetState.hide()
-                }.invokeOnCompletion {
-                    onDismiss()
-                }
-            },
-        )
 
         FilledButton(
             modifier = Modifier.fillMaxWidth(),
