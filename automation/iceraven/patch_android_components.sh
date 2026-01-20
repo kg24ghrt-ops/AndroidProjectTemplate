@@ -21,3 +21,8 @@ git -C android-components apply < automation/iceraven/patches/top_sites_no_most_
 git -C android-components apply < automation/iceraven/patches/toolbar.patch
 
 python automation/iceraven/toolkit/crashreporter/generate_crash_reporter_sources.py
+
+mkdir -p netwerk/dns
+version=$(sed 's/\./_/g' version.txt)
+tag=FIREFOX-ANDROID_${version}_RELEASE
+wget https://raw.githubusercontent.com/mozilla-firefox/firefox/refs/tags/${tag}/netwerk/dns/effective_tld_names.dat -O network/dns/effective_tld_names.dat
