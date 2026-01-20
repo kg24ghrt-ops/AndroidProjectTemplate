@@ -33,8 +33,6 @@ import org.mozilla.fenix.theme.Theme
 
 internal val FAVICON_ROUNDED_CORNER_SHAPE = RoundedCornerShape(2.dp)
 
-internal val FAVICON_ROUNDED_CORNER_SHAPE = RoundedCornerShape(2.dp)
-
 /**
  * Load and display the favicon of a particular website.
  *

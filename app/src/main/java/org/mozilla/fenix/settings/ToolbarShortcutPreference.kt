@@ -36,15 +36,6 @@ internal abstract class ToolbarShortcutPreference @JvmOverloads constructor(
     @ColorInt
     private var colorOnSurfaceVariant: Int = 0
 
-    @ColorInt
-    private var colorTertiary: Int = 0
-
-    @ColorInt
-    private var colorOnSurface: Int = 0
-
-    @ColorInt
-    private var colorOnSurfaceVariant: Int = 0
-
     init {
         layoutResource = R.layout.preference_toolbar_shortcut
         isSelectable = false

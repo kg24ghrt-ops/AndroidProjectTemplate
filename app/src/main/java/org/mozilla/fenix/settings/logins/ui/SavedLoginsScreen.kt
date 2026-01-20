@@ -4,8 +4,6 @@
 
 package org.mozilla.fenix.settings.logins.ui
 
-import android.view.WindowManager
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -81,7 +79,6 @@ internal fun SavedLoginsScreen(
     exitLogins: () -> Unit = {},
     startDestination: String = LoginsDestinations.LIST,
 ) {
-    val activityContext = LocalActivity.current as ComponentActivity
     val navController = rememberNavController()
     val store = buildStore(navController)
 
