@@ -39,8 +39,8 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         libs {
-            // This 'settingsDir' part is the magic fix for GitHub Actions
-            from(files("${settingsDir}/gradle/libs.versions.toml"))
+            // This is the absolute safest way to reference the file in CI
+            from(file("gradle/libs.versions.toml"))
         }
     }
 }
