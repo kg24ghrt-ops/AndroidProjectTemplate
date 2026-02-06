@@ -39,8 +39,9 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         libs {
-            // This is the absolute safest way to reference the file in CI
-            from(file("gradle/libs.versions.toml"))
+            // This line specifically forces the path relative to the SETTINGS file, 
+            // which is the only reliable way in a Mozilla/Fenix CI tree.
+            from(files(new File(settingsDir, "gradle/libs.versions.toml")))
         }
     }
 }
@@ -60,26 +61,10 @@ include ':benchmark'
 gradle.projectsLoaded { ->
     gradle.allprojects { project ->
         if (project.projectDir.absolutePath.contains("/android-components/")) {
-            project.tasks.withType(Test).configureEach {
-                enabled = false
-            }
+            project.tasks.withType(Test).configureEach { enabled = false }
             project.tasks.configureEach { task ->
-                if (task.name.contains("lint")) {
-                    task.enabled = false
-                }
+                if (task.name.contains("lint")) { task.enabled = false }
             }
         }
     }
-}
-
-def projectLocalProperties = file("local.properties").with { localPropertiesFile ->
-    def localProperties = new Properties()
-    if (localPropertiesFile.canRead()) {
-        localPropertiesFile.withInputStream { localProperties.load(it) }
-    }
-    localProperties
-}
-
-projectLocalProperties.each { prop ->
-    gradle.ext."localProperties.${prop.key}" = prop.value
 }
