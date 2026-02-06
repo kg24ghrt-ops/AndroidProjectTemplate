@@ -33,13 +33,6 @@ jobs:
             exit 1
           fi
 
-      - name: Copy version catalog for included builds (CI fix)
-        run: |
-          echo "Ensuring /home/runner/work/gradle/libs.versions.toml exists..."
-          mkdir -p /home/runner/work/gradle
-          cp gradle/libs.versions.toml /home/runner/work/gradle/libs.versions.toml || true
-          ls -l /home/runner/work/gradle/libs.versions.toml || true
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -49,26 +42,22 @@ jobs:
       - name: Install Android SDK command-line tools & platforms
         run: |
           set -euo pipefail
-          mkdir -p "$ANDROID_SDK_ROOT"
+          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
           cd "$ANDROID_SDK_ROOT"
 
           CLI_ZIP=commandlinetools-linux.zip
           if [ ! -d "$ANDROID_SDK_ROOT/cmdline-tools/latest" ]; then
             curl -fsSL -o "$CLI_ZIP" "https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip"
-            
-            mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools-temp"
-            unzip -q "$CLI_ZIP" -d "$ANDROID_SDK_ROOT/cmdline-tools-temp"
-
+            unzip -q "$CLI_ZIP" -d "$ANDROID_SDK_ROOT/cmdline-tools/temp"
             mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
-            mv "$ANDROID_SDK_ROOT/cmdline-tools-temp/cmdline-tools"/* "$ANDROID_SDK_ROOT/cmdline-tools/latest/"
-            rm -rf "$ANDROID_SDK_ROOT/cmdline-tools-temp" "$CLI_ZIP"
+            mv "$ANDROID_SDK_ROOT/cmdline-tools/temp/cmdline-tools"/* "$ANDROID_SDK_ROOT/cmdline-tools/latest/"
+            rm -rf "$ANDROID_SDK_ROOT/cmdline-tools/temp" "$CLI_ZIP"
           fi
 
           export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
 
-          # Install SDK components
-          yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-34" "build-tools;34.0.0" >/dev/null
-          yes | sdkmanager --licenses --sdk_root="$ANDROID_SDK_ROOT" || true
+          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses --sdk_root="$ANDROID_SDK_ROOT"
 
       - name: Add Android tools to PATH
         run: |
@@ -114,4 +103,4 @@ jobs:
         with:
           name: gradle-problems
           path: |
-            build/reports/problems/** || build/reports/** || build/*.log || ""
+            build/reports/problems/** || build/reports/** || build/*.log
