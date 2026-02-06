@@ -55,7 +55,10 @@ jobs:
           CLI_ZIP=commandlinetools-linux.zip
           if [ ! -d "$ANDROID_SDK_ROOT/cmdline-tools/latest" ]; then
             curl -fsSL -o "$CLI_ZIP" "https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip"
+            
+            mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools-temp"
             unzip -q "$CLI_ZIP" -d "$ANDROID_SDK_ROOT/cmdline-tools-temp"
+
             mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
             mv "$ANDROID_SDK_ROOT/cmdline-tools-temp/cmdline-tools"/* "$ANDROID_SDK_ROOT/cmdline-tools/latest/"
             rm -rf "$ANDROID_SDK_ROOT/cmdline-tools-temp" "$CLI_ZIP"
@@ -63,6 +66,7 @@ jobs:
 
           export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
 
+          # Install SDK components
           yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-34" "build-tools;34.0.0" >/dev/null
           yes | sdkmanager --licenses --sdk_root="$ANDROID_SDK_ROOT" || true
 
