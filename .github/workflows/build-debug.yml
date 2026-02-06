@@ -5,10 +5,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-env:
-  ANDROID_SDK_ROOT: $HOME/android-sdk
-  ANDROID_HOME: $HOME/android-sdk
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,59 +17,30 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Verify version catalog exists
-        run: |
-          echo "Checking version catalog..."
-          if [ -f gradle/libs.versions.toml ]; then
-            echo "Found libs.versions.toml"
-            ls -l gradle/libs.versions.toml
-          else
-            echo "ERROR: gradle/libs.versions.toml not found"
-            ls -la
-            exit 1
-          fi
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Install Android SDK command-line tools & platforms
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Verify version catalog exists
         run: |
-          set -euo pipefail
-
-          # Make sure all necessary directories exist
-          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/temp"
-          mkdir -p "$ANDROID_SDK_ROOT/platform-tools"
-
-          cd "$ANDROID_SDK_ROOT"
-
-          CLI_ZIP=commandlinetools-linux.zip
-          if [ ! -d "$ANDROID_SDK_ROOT/cmdline-tools/latest" ]; then
-            curl -fsSL -o "$CLI_ZIP" "https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip"
-            unzip -q "$CLI_ZIP" -d "$ANDROID_SDK_ROOT/cmdline-tools/temp"
-            mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
-            mv "$ANDROID_SDK_ROOT/cmdline-tools/temp/cmdline-tools"/* "$ANDROID_SDK_ROOT/cmdline-tools/latest/"
-            rm -rf "$ANDROID_SDK_ROOT/cmdline-tools/temp" "$CLI_ZIP"
+          echo "Checking version catalog..."
+          if [ -f gradle/libs.versions.toml ]; then
+            echo "Found libs.versions.toml"
+          else
+            echo "ERROR: gradle/libs.versions.toml not found"
+            ls -la
+            exit 1
           fi
 
-          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
-
-          # Install basic SDK components
-          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses --sdk_root="$ANDROID_SDK_ROOT"
-
-      - name: Add Android tools to PATH
+      - name: Install specific SDK components
         run: |
-          echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
-          echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
-
-      - name: Grant execute permission for Gradle
-        run: chmod +x ./gradlew
-
-      - name: Show Gradle info
-        run: ./gradlew --version
+          # Use the pre-installed sdkmanager to get specific versions
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
       - name: Gradle cache
         uses: actions/cache@v4
@@ -85,27 +52,21 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}-
 
-      - name: Assemble Debug (no strict checks)
-        run: |
-          set -euo pipefail
-          ./gradlew assembleDebug -x lint -x detekt -x ktlint --no-daemon --stacktrace --info
+      - name: Grant execute permission for Gradle
+        run: chmod +x ./gradlew
 
-      - name: Locate APKs
-        run: |
-          echo "=== APKs found ==="
-          find . -name "*debug*.apk" -maxdepth 6 -print || true
+      - name: Assemble Debug (no strict checks)
+        run: ./gradlew assembleDebug -x lint -x detekt -x ktlint --no-daemon --stacktrace --info
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
           name: debug-apk
-          path: |
-            **/*debug*.apk
+          path: "**/build/outputs/apk/debug/*.apk"
 
       - name: Upload Gradle problem reports (if any)
-        if: failure() || always()
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: gradle-problems
-          path: |
-            build/reports/problems/** || build/reports/** || build/*.log,
+          path: "**/build/reports/"
