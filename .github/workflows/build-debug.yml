@@ -42,7 +42,11 @@ jobs:
       - name: Install Android SDK command-line tools & platforms
         run: |
           set -euo pipefail
-          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
+
+          # Make sure all necessary directories exist
+          mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/temp"
+          mkdir -p "$ANDROID_SDK_ROOT/platform-tools"
+
           cd "$ANDROID_SDK_ROOT"
 
           CLI_ZIP=commandlinetools-linux.zip
@@ -56,6 +60,7 @@ jobs:
 
           export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
 
+          # Install basic SDK components
           yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-34" "build-tools;34.0.0"
           yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses --sdk_root="$ANDROID_SDK_ROOT"
 
@@ -103,4 +108,4 @@ jobs:
         with:
           name: gradle-problems
           path: |
-            build/reports/problems/** || build/reports/** || build/*.log
+            build/reports/problems/** || build/reports/** || build/*.log,
