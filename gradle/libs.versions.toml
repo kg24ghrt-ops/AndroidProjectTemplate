@@ -1,6 +1,6 @@
 [versions]
 # AGP
-android-gradle-plugin = "8.7.3"
+agp = "8.7.3"
 android-lint = "31.7.3"
 
 # Kotlin
@@ -106,7 +106,7 @@ zxing = "3.5.4"
 
 [libraries]
 # AGP
-android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "android-gradle-plugin" }
+agp = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 
 # Kotlin
 kotlin-annotations-jvm = { group = "org.jetbrains.kotlin", name = "kotlin-annotations-jvm", version.ref = "kotlin" }
