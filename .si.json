@@ -18,6 +18,10 @@
     ".md": {
       "enabled": false,
       "run": "marksman server"
+    },
+    ".gradle": {
+      "enabled": true,
+      "run": "groovy-language-server"
     }
   }
 }
