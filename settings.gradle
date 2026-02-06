@@ -37,6 +37,12 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
+    versionCatalogs {
+        libs {
+            // This 'settingsDir' part is the magic fix for GitHub Actions
+            from(files("${settingsDir}/gradle/libs.versions.toml"))
+        }
+    }
 }
 
 ext.topsrcdir = rootProject.projectDir.absolutePath.minus("mobile/android/fenix")
@@ -52,7 +58,6 @@ include ':mozilla-detekt-rules'
 include ':benchmark'
 
 gradle.projectsLoaded { ->
-    // Disables A-C tests and lint when building Fenix.
     gradle.allprojects { project ->
         if (project.projectDir.absolutePath.contains("/android-components/")) {
             project.tasks.withType(Test).configureEach {
