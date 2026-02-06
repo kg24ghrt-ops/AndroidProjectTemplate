@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
 
 env:
-  ANDROID_SDK_ROOT: ${{ runner.tool_cache }}/android-sdk
-  ANDROID_HOME: ${{ runner.tool_cache }}/android-sdk
+  ANDROID_SDK_ROOT: $HOME/android-sdk
+  ANDROID_HOME: $HOME/android-sdk
 
 jobs:
   build:
@@ -36,8 +36,8 @@ jobs:
       - name: Copy version catalog for included builds (CI fix)
         run: |
           echo "Ensuring /home/runner/work/gradle/libs.versions.toml exists..."
-          sudo mkdir -p /home/runner/work/gradle
-          sudo cp gradle/libs.versions.toml /home/runner/work/gradle/libs.versions.toml || true
+          mkdir -p /home/runner/work/gradle
+          cp gradle/libs.versions.toml /home/runner/work/gradle/libs.versions.toml || true
           ls -l /home/runner/work/gradle/libs.versions.toml || true
 
       - name: Set up JDK 17
@@ -49,13 +49,11 @@ jobs:
       - name: Install Android SDK command-line tools & platforms
         run: |
           set -euo pipefail
-          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
           mkdir -p "$ANDROID_SDK_ROOT"
           cd "$ANDROID_SDK_ROOT"
 
-          # Download command line tools (linux). If this URL breaks in future, update to the latest
           CLI_ZIP=commandlinetools-linux.zip
-          if [ ! -d "$ANDROID_SDK_ROOT/cmdline-tools" ]; then
+          if [ ! -d "$ANDROID_SDK_ROOT/cmdline-tools/latest" ]; then
             curl -fsSL -o "$CLI_ZIP" "https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip"
             unzip -q "$CLI_ZIP" -d "$ANDROID_SDK_ROOT/cmdline-tools-temp"
             mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools/latest"
@@ -65,38 +63,19 @@ jobs:
 
           export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
 
-          # Install basic SDK components. Adjust platform/build-tools versions if your project needs different ones.
           yes | sdkmanager --sdk_root="$ANDROID_SDK_ROOT" "platform-tools" "platforms;android-34" "build-tools;34.0.0" >/dev/null
-
-          # Accept licenses
           yes | sdkmanager --licenses --sdk_root="$ANDROID_SDK_ROOT" || true
-
-          echo "Installed SDK contents:"
-          ls -la "$ANDROID_SDK_ROOT"
-          sdkmanager --list --sdk_root="$ANDROID_SDK_ROOT" | head -n 40 || true
 
       - name: Add Android tools to PATH
         run: |
-          echo "PATH before: $PATH"
-          echo "${{ runner.tool_cache }}/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
-          echo "${{ runner.tool_cache }}/android-sdk/platform-tools" >> $GITHUB_PATH
-          echo "Added Android SDK to PATH"
+          echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
 
       - name: Grant execute permission for Gradle
         run: chmod +x ./gradlew
 
       - name: Show Gradle info
         run: ./gradlew --version
-
-      - name: Show repo root and important files (debug)
-        run: |
-          pwd
-          echo "Repo root listing:"
-          ls -la
-          echo "Gradle settings:"
-          sed -n '1,200p' settings.gradle || true
-          echo "Gradle catalog exists:"
-          ls -la gradle || true
 
       - name: Gradle cache
         uses: actions/cache@v4
