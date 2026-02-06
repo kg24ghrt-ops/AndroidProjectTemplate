@@ -1,7 +1,3 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
 pluginManagement {
     if (!gradle.root.hasProperty("mozconfig")){
         apply from: file('./gradle/mozconfig.gradle')
@@ -32,14 +28,16 @@ plugins {
 }
 
 dependencyResolutionManagement {
-        }
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
     }
 }
 
 ext.topsrcdir = rootProject.projectDir.absolutePath.minus("mobile/android/fenix")
 
 apply from: file('./shared-settings.gradle')
-// apply from: file('./autopublish-settings.gradle')
 
 if (gradle.ext.mozconfig.substs.MOZ_APPSERVICES_IN_TREE) {
     apply from: file("${topsrcdir}/services/app-services/settings.gradle")
@@ -50,29 +48,12 @@ include ':mozilla-detekt-rules'
 include ':benchmark'
 
 gradle.projectsLoaded { ->
-    // Disables A-C tests and lint when building Fenix.
     gradle.allprojects { project ->
         if (project.projectDir.absolutePath.contains("/android-components/")) {
-            project.tasks.withType(Test).configureEach {
-                enabled = false
-            }
+            project.tasks.withType(Test).configureEach { enabled = false }
             project.tasks.configureEach { task ->
-                if (task.name.contains("lint")) {
-                    task.enabled = false
-                }
+                if (task.name.contains("lint")) { task.enabled = false }
             }
         }
     }
-}
-
-def projectLocalProperties = file("local.properties").with { localPropertiesFile ->
-    def localProperties = new Properties()
-    if (localPropertiesFile.canRead()) {
-        localPropertiesFile.withInputStream { localProperties.load(it) }
-    }
-    localProperties
-}
-
-projectLocalProperties.each { prop ->
-    gradle.ext."localProperties.${prop.key}" = prop.value
 }
