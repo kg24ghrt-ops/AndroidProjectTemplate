@@ -10,29 +10,50 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout full repo with submodules
       - name: Checkout repo (full depth)
         uses: actions/checkout@v4
         with:
           submodules: recursive
           fetch-depth: 0  # ensures full history so files exist
 
+      # Debug: Verify version catalog exists in repo
       - name: Verify version catalog exists
         run: |
           echo "Checking version catalog..."
-          ls -l gradle/libs.versions.toml
+          if [ -f gradle/libs.versions.toml ]; then
+            echo "Found libs.versions.toml:"
+            ls -l gradle/libs.versions.toml
+          else
+            echo "ERROR: libs.versions.toml not found!"
+            exit 1
+          fi
 
+      # CI fix: copy version catalog to path expected by included builds
+      - name: Copy version catalog for included builds
+        run: |
+          echo "Ensuring /home/runner/work/gradle/libs.versions.toml exists..."
+          sudo mkdir -p /home/runner/work/gradle
+          sudo cp gradle/libs.versions.toml /home/runner/work/gradle/libs.versions.toml
+          echo "Copied:"
+          ls -l /home/runner/work/gradle/libs.versions.toml
+
+      # Set up Java
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
+      # Gradle permission
       - name: Grant execute permission for Gradle
         run: chmod +x ./gradlew
 
+      # Show Gradle version
       - name: Show Gradle version
         run: ./gradlew --version
 
+      # Gradle cache
       - name: Gradle cache
         uses: actions/cache@v4
         with:
@@ -43,6 +64,7 @@ jobs:
           restore-keys: |
             gradle-${{ runner.os }}-
 
+      # Build debug APK
       - name: Assemble Debug (no strict checks)
         run: |
           ./gradlew assembleDebug \
@@ -52,11 +74,13 @@ jobs:
             --no-daemon \
             --stacktrace
 
+      # Locate APKs
       - name: Locate APKs
         run: |
           echo "=== APKs found ==="
           find . -name "*debug*.apk" || true
 
+      # Upload APKs
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
