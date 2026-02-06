@@ -22,6 +22,10 @@
     ".gradle": {
       "enabled": true,
       "run": "groovy-language-server"
+    },
+    ".toml": {
+      "enabled": false,
+      "run": "taplo lsp stdio"
     }
   }
 }
