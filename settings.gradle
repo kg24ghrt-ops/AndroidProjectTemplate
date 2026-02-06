@@ -32,9 +32,6 @@ plugins {
 }
 
 dependencyResolutionManagement {
-    versionCatalogs {
-        libs {
-            from(files("${rootDir}/gradle/libs.versions.toml"))
         }
     }
 }
