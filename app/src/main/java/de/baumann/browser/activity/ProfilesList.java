@@ -7,7 +7,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,183 +39,187 @@ import de.baumann.browser.view.AdapterProfileList;
 public class ProfilesList extends AppCompatActivity {
 
     private AdapterProfileList adapter;
-    private List<String> list;
+    private List<String> domainList;
+    private String listToLoad;
+    
+    // Domain Managers
     private List_protected listProtected;
     private List_standard listStandard;
     private List_trusted listTrusted;
 
-    private String listToLoad;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Window window = this.getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.md_theme_light_onBackground));
-
-        if (getSupportActionBar() != null) getSupportActionBar().hide();
+        
+        // Ensure theme and status bar match the Ghost aesthetic
         HelperUnit.initTheme(this);
         setContentView(R.layout.activity_settings_profile_list);
+        
+        // Hide the default Action Bar if it exists, use Toolbar instead
+        if (getSupportActionBar() != null) getSupportActionBar().hide();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+        getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.chrome_white));
+
+        // Load specific profile list type (Protected, Standard, or Trusted)
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         listToLoad = sp.getString("listToLoad", "standard");
+        updateActivityTitle();
 
-        if (listToLoad != null) {
-            switch (listToLoad) {
-                case "protected":
-                    setTitle(R.string.setting_title_profiles_protectedList);
-                    break;
-                case "standard":
-                    setTitle(R.string.setting_title_profiles_standardList);
-                    break;
-                case "trusted":
-                    setTitle(R.string.setting_title_profiles_trustedList);
-                    break;
-            }
-        }
-
+        // Initialize Managers
         listProtected = new List_protected(this);
         listStandard = new List_standard(this);
         listTrusted = new List_trusted(this);
 
+        loadDomainsFromDatabase();
+        initListView();
+        initAddButton();
+    }
+
+    private void updateActivityTitle() {
+        if (listToLoad == null) return;
+        switch (listToLoad) {
+            case "protected": setTitle(R.string.setting_title_profiles_protectedList); break;
+            case "standard": setTitle(R.string.setting_title_profiles_standardList); break;
+            case "trusted": setTitle(R.string.setting_title_profiles_trustedList); break;
+        }
+    }
+
+    private void loadDomainsFromDatabase() {
         RecordAction action = new RecordAction(this);
         action.open(false);
-
         switch (listToLoad) {
-            case "protected":
-                list = action.listDomains(RecordUnit.TABLE_PROTECTED);
-                break;
-            case "standard":
-                list = action.listDomains(RecordUnit.TABLE_STANDARD);
-                break;
-            case "trusted":
-                list = action.listDomains(RecordUnit.TABLE_TRUSTED);
-                break;
+            case "protected": domainList = action.listDomains(RecordUnit.TABLE_PROTECTED); break;
+            case "standard": domainList = action.listDomains(RecordUnit.TABLE_STANDARD); break;
+            case "trusted": domainList = action.listDomains(RecordUnit.TABLE_TRUSTED); break;
+            default: domainList = action.listDomains(RecordUnit.TABLE_STANDARD); break;
         }
-
         action.close();
+    }
 
+    private void initListView() {
         ListView listView = findViewById(R.id.whitelist);
         listView.setEmptyView(findViewById(R.id.whitelist_empty));
 
-        //noinspection NullableProblems
-        adapter = new AdapterProfileList(this, list) {
+        adapter = new AdapterProfileList(this, domainList) {
             @Override
             public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
                 View v = super.getView(position, convertView, parent);
+                
                 Button deleteEntry = v.findViewById(R.id.cancelButton);
-                deleteEntry.setVisibility(View.VISIBLE);
                 MaterialCardView cardView = v.findViewById(R.id.cardView);
-                cardView.setVisibility(View.GONE);
-                deleteEntry.setOnClickListener(v1 -> {
-                    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(ProfilesList.this);
-                    builder.setIcon(R.drawable.icon_alert);
-                    builder.setTitle(R.string.menu_delete);
-                    builder.setMessage(R.string.hint_database);
-                    builder.setPositiveButton(R.string.app_ok, (dialog, whichButton) -> {
-                        switch (listToLoad) {
-                            case "protected":
-                                listProtected.removeDomain(list.get(position));
-                                break;
-                            case "standard":
-                                listStandard.removeDomain(list.get(position));
-                                break;
-                            case "trusted":
-                                listTrusted.removeDomain(list.get(position));
-                                break;
-                        }
-                        list.remove(position);
-                        notifyDataSetChanged();
-                        NinjaToast.show(ProfilesList.this, R.string.toast_delete_successful);
-                    });
-                    builder.setNegativeButton(R.string.app_cancel, (dialog, whichButton) -> dialog.cancel());
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                    HelperUnit.setupDialog(ProfilesList.this, dialog);
-                });
+                
+                deleteEntry.setVisibility(View.VISIBLE);
+                if (cardView != null) cardView.setVisibility(View.GONE);
+
+                deleteEntry.setOnClickListener(v1 -> showDeleteDialog(position));
                 return v;
             }
         };
         listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+    }
 
+    private void showDeleteDialog(int position) {
+        new MaterialAlertDialogBuilder(this)
+                .setIcon(R.drawable.icon_alert)
+                .setTitle(R.string.menu_delete)
+                .setMessage(R.string.hint_database)
+                .setPositiveButton(R.string.app_ok, (dialog, which) -> {
+                    String domain = domainList.get(position);
+                    removeFromDatabase(domain);
+                    domainList.remove(position);
+                    adapter.notifyDataSetChanged();
+                    NinjaToast.show(this, R.string.toast_delete_successful);
+                })
+                .setNegativeButton(R.string.app_cancel, null)
+                .show();
+    }
+
+    private void initAddButton() {
         Button button = findViewById(R.id.whitelist_add);
+        EditText editText = findViewById(R.id.whitelist_edit);
+        
         button.setOnClickListener(v -> {
-            EditText editText = findViewById(R.id.whitelist_edit);
             String domain = editText.getText().toString().trim();
             if (domain.isEmpty()) {
-                NinjaToast.show(ProfilesList.this, R.string.toast_input_empty);
+                NinjaToast.show(this, R.string.toast_input_empty);
             } else if (!BrowserUnit.isURL(domain)) {
-                NinjaToast.show(ProfilesList.this, R.string.toast_invalid_domain);
+                NinjaToast.show(this, R.string.toast_invalid_domain);
             } else {
-                RecordAction action1 = new RecordAction(ProfilesList.this);
-                action1.open(true);
-                if (action1.checkDomain(domain, RecordUnit.TABLE_PROTECTED)) {
-                    NinjaToast.show(ProfilesList.this, R.string.toast_domain_already_exists);
-                } else {
-                    switch (listToLoad) {
-                        case "protected":
-                            listProtected.addDomain(domain.trim());
-                            break;
-                        case "standard":
-                            listStandard.addDomain(domain.trim());
-                            break;
-                        case "trusted":
-                            listTrusted.addDomain(domain.trim());
-                            break;
-                    }
-                    list.add(0, domain.trim());
+                if (addToDatabase(domain)) {
+                    domainList.add(0, domain);
                     adapter.notifyDataSetChanged();
-                    NinjaToast.show(ProfilesList.this, R.string.toast_add_whitelist_successful);
+                    editText.setText(""); // Clear input
+                    NinjaToast.show(this, R.string.toast_add_whitelist_successful);
+                } else {
+                    NinjaToast.show(this, R.string.toast_domain_already_exists);
                 }
-                action1.close();
             }
         });
+    }
+
+    private boolean addToDatabase(String domain) {
+        RecordAction action = new RecordAction(this);
+        action.open(true);
+        boolean exists = action.checkDomain(domain, RecordUnit.TABLE_PROTECTED) || 
+                         action.checkDomain(domain, RecordUnit.TABLE_STANDARD) || 
+                         action.checkDomain(domain, RecordUnit.TABLE_TRUSTED);
+        
+        if (!exists) {
+            switch (listToLoad) {
+                case "protected": listProtected.addDomain(domain); break;
+                case "standard": listStandard.addDomain(domain); break;
+                case "trusted": listTrusted.addDomain(domain); break;
+            }
+        }
+        action.close();
+        return !exists;
+    }
+
+    private void removeFromDatabase(String domain) {
+        switch (listToLoad) {
+            case "protected": listProtected.removeDomain(domain); break;
+            case "standard": listStandard.removeDomain(domain); break;
+            case "trusted": listTrusted.removeDomain(domain); break;
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_profile_list, menu);
-        return super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
-
-        if (menuItem.getItemId() == android.R.id.home) finish();
-        else if (menuItem.getItemId() == R.id.menu_clear) {
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-            builder.setIcon(R.drawable.icon_alert);
-            builder.setTitle(R.string.menu_delete);
-            builder.setMessage(R.string.hint_database);
-            builder.setPositiveButton(R.string.app_ok, (dialog, whichButton) -> {
-                switch (listToLoad) {
-                    case "protected":
-                        listProtected.clearDomains();
-                        break;
-                    case "standard":
-                        listStandard.clearDomains();
-                        break;
-                    case "trusted":
-                        listTrusted.clearDomains();
-                        break;
-                }
-                list.clear();
-                adapter.notifyDataSetChanged();
-            });
-            builder.setNegativeButton(R.string.app_cancel, (dialog, whichButton) -> dialog.cancel());
-            AlertDialog dialog = builder.create();
-            dialog.show();
-            HelperUnit.setupDialog(this, dialog);
-        } else if (menuItem.getItemId() == R.id.menu_help) {
-            Uri webpage = Uri.parse("https://github.com/scoute-dich/browser/wiki/Profile-list");
-            BrowserUnit.intentURL(this, webpage);
+        int id = menuItem.getItemId();
+        if (id == android.R.id.home) {
+            finish();
+        } else if (id == R.id.menu_clear) {
+            showClearAllDialog();
+        } else if (id == R.id.menu_help) {
+            BrowserUnit.intentURL(this, Uri.parse("https://github.com/scoute-dich/browser/wiki/Profile-list"));
         }
         return true;
+    }
+
+    private void showClearAllDialog() {
+        new MaterialAlertDialogBuilder(this)
+                .setIcon(R.drawable.icon_alert)
+                .setTitle(R.string.menu_delete)
+                .setMessage(R.string.hint_database)
+                .setPositiveButton(R.string.app_ok, (dialog, which) -> {
+                    switch (listToLoad) {
+                        case "protected": listProtected.clearDomains(); break;
+                        case "standard": listStandard.clearDomains(); break;
+                        case "trusted": listTrusted.clearDomains(); break;
+                    }
+                    domainList.clear();
+                    adapter.notifyDataSetChanged();
+                })
+                .setNegativeButton(R.string.app_cancel, null)
+                .show();
     }
 }
