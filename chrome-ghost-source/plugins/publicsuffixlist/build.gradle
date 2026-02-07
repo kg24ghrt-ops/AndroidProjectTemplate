@@ -1,46 +1,31 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // This gives the project access to 'com.android.library'
+        classpath 'com.android.tools.build:gradle:8.7.3' 
+    }
+}
 
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-
-apply plugin: plugins.PublicSuffixListPlugin
+apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
-    compileSdkVersion config.compileSdkVersion
-
+    namespace 'mozilla.components.lib.publicsuffixlist'
+    compileSdk 35
+    
     defaultConfig {
-        minSdkVersion config.minSdkVersion
-        targetSdkVersion config.targetSdkVersion
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        minSdk 21
     }
+}
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    buildFeatures {
-        viewBinding true
-    }
+repositories {
+    google()
+    mavenCentral()
 }
 
 dependencies {
-    implementation Dependencies.kotlin_stdlib
-    implementation Dependencies.kotlin_coroutines
-    implementation project(':support-ktx')
-
-    testImplementation project(':support-test')
-    testImplementation Dependencies.androidx_test_core
-    testImplementation Dependencies.androidx_test_junit
-    testImplementation Dependencies.testing_robolectric
-    testImplementation Dependencies.testing_mockito
-    testImplementation Dependencies.testing_coroutines
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
 }
-
-apply from: '../../../publish.gradle'
-ext.configurePublish(config.componentsGroupId, archivesBaseName, project.ext.description)
