@@ -1,18 +1,26 @@
 [versions]
-# Keep your existing versions here, but ensure these are added:
+# Core Versions
 android-gradle = "8.7.3"
 androidx-benchmark = "1.2.4"
 androidx-navigation = "2.7.7"
 mozilla-glean = "61.1.0"
 oss-licenses = "0.10.6"
+kotlin = "1.9.24"
+ksp = "1.9.24-1.0.20"
+glean = "61.1.0"
 
 [libraries]
-# These are the specific keys your build.gradle is looking for
+# Buildscript Classpaths
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "android-gradle" }
 androidx-benchmark-gradle = { group = "androidx.benchmark", name = "benchmark-gradle-plugin", version.ref = "androidx-benchmark" }
 androidx-navigation-safeargs = { group = "androidx.navigation", name = "navigation-safe-args-gradle-plugin", version.ref = "androidx-navigation" }
 mozilla-glean-gradle-plugin = { group = "org.mozilla.telemetry", name = "glean-gradle-plugin", version.ref = "mozilla-glean" }
 osslicenses-plugin = { group = "com.google.android.gms", name = "oss-licenses-plugin", version.ref = "oss-licenses" }
 
-# Note: If your file had other libraries before, they need to be here too. 
-# Since I cannot see the middle of your file, I am focusing on the ones causing the crash.
+[plugins]
+# The plugins block in build.gradle is looking for these specific IDs
+android-application = { id = "com.android.application", version.ref = "android-gradle" }
+android-library = { id = "com.android.library", version.ref = "android-gradle" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
