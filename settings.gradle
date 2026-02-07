@@ -20,6 +20,7 @@ pluginManagement {
         }
     }
 
+    // Include Mozilla infrastructure builds
     includeBuild("./android-components/plugins/publicsuffixlist")
     includeBuild("./android-components/plugins/dependencies")
     includeBuild("./android-components/plugins/config")
@@ -37,9 +38,9 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
-    // We removed the manual 'versionCatalogs' block.
-    // Gradle 8.x automatically finds and shares gradle/libs.versions.toml
-    // across all included builds.
+    // We have removed the manual 'versionCatalogs' block.
+    // Gradle 8.x automatically detects 'gradle/libs.versions.toml' and 
+    // shares it correctly with all included builds above.
 }
 
 ext.topsrcdir = rootProject.projectDir.absolutePath.minus("mobile/android/fenix")
@@ -55,16 +56,12 @@ include ':mozilla-detekt-rules'
 include ':benchmark'
 
 gradle.projectsLoaded { ->
-    // Disables A-C tests and lint when building Fenix.
+    // Disables A-C tests and lint when building Fenix to speed up CI and avoid conflicts.
     gradle.allprojects { project ->
         if (project.projectDir.absolutePath.contains("/android-components/")) {
-            project.tasks.withType(Test).configureEach {
-                enabled = false
-            }
+            project.tasks.withType(Test).configureEach { enabled = false }
             project.tasks.configureEach { task ->
-                if (task.name.contains("lint")) {
-                    task.enabled = false
-                }
+                if (task.name.contains("lint")) { task.enabled = false }
             }
         }
     }
