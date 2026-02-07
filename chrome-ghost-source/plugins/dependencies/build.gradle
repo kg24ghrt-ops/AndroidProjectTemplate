@@ -1,8 +1,17 @@
-plugins {
-    id 'java-gradle-plugin'
-    id 'kotlin-dsl'
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.7.3'
+    }
 }
 
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'org.jetbrains.kotlin.jvm'
+
+// We need this so the ID 'mozac.DependenciesPlugin' actually points to code
 gradlePlugin {
     plugins {
         dependenciesPlugin {
@@ -13,6 +22,12 @@ gradlePlugin {
 }
 
 repositories {
-    mavenCentral()
     google()
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
+    // This allows the plugin to see Android classes if needed
+    compileOnly 'com.android.tools.build:gradle:8.7.3'
 }
