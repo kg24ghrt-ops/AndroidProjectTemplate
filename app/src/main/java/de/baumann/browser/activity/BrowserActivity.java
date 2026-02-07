@@ -9,13 +9,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
@@ -45,15 +45,15 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
     
     private NinjaWebView ninjaWebView;
     private AlbumController currentAlbumController = null;
-    private AlbumController recordedAlbumController = null; // Ghost Hopper Target
+    private AlbumController recordedAlbumController = null; // The tab the recorder sees
     private SharedPreferences sp;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // GHOST SHIELD: Blocks recording/screenshots by making the window pitch black to trackers.
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        // NOTE: FLAG_SECURE removed to allow the "Pacific" tab to be recorded.
+        // If this is on, the whole screen is black. With it off, we control the layers.
 
         HelperUnit.initTheme(this);
         if (getSupportActionBar() != null) getSupportActionBar().hide();
@@ -61,7 +61,6 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
 
         setContentView(R.layout.activity_main);
 
-        // Bind Views from activity_main.xml
         contentFrame = findViewById(R.id.main_content);
         omniBox_text = findViewById(R.id.omniBox_input);
         omniBox_tab = findViewById(R.id.omniBox_tab);
@@ -81,28 +80,54 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
     private void initNavigation() {
         bottom_navigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-
-            // Mapping to your menu_bottom_overview.xml IDs
-            if (id == R.id.page_0) { // Tab Icon
-                showOverview();
-            } else if (id == R.id.page_1) { // Web/Home Icon
-                ninjaWebView.loadUrl("https://www.google.com");
-                hideOverview();
-            } else if (id == R.id.page_2) { // Bookmark Icon
-                // Intent for Bookmarks would go here
-            } else if (id == R.id.page_3) { // History Icon
-                // Intent for History would go here
-            } else if (id == R.id.page_4) { // Menu/Overflow Icon
-                showOverflow();
-            }
+            if (id == R.id.page_0) { showOverview(); }
+            else if (id == R.id.page_1) { ninjaWebView.loadUrl("https://www.google.com"); hideOverview(); }
+            else if (id == R.id.page_4) { showOverflow(); }
             return true;
         });
 
-        // GHOST HOPPER: Long press the Tab icon to "Pin" the current view for recorders.
+        // GHOST PIN: Long press Tab icon to lock the recorder to THIS current tab
         bottom_navigation.findViewById(R.id.page_0).setOnLongClickListener(v -> {
             this.recordedAlbumController = currentAlbumController;
+            Toast.makeText(this, "Tab Locked for Recorder", Toast.LENGTH_SHORT).show();
             return true;
         });
+    }
+
+    @Override
+    public void showAlbum(AlbumController controller) {
+        if (currentAlbumController != null) currentAlbumController.deactivate();
+
+        contentFrame.removeAllViews();
+
+        // REDIRECTION LOGIC:
+        // If we have a pinned tab, we keep it in the layout so the OS recorder sees it.
+        // We set it to 1% alpha (invisible to user) and put it in the background.
+        if (recordedAlbumController != null) {
+            View recordedView = (View) recordedAlbumController;
+            if (recordedView.getParent() != null) ((FrameLayout) recordedView.getParent()).removeView(recordedView);
+            
+            recordedView.setAlpha(0.01f); // Tricking the eye, but not the OS
+            contentFrame.addView(recordedView);
+        }
+
+        currentAlbumController = controller;
+        ninjaWebView = (NinjaWebView) controller;
+        currentAlbumController.activate();
+        
+        View currentView = (View) controller;
+        currentView.setAlpha(1.0f);
+        contentFrame.addView(currentView);
+        
+        omniBox_text.setText(ninjaWebView.getUrl());
+    }
+
+    public void addAlbum(String title, String url, boolean active) {
+        NinjaWebView webView = new NinjaWebView(this);
+        webView.setBrowserController(this);
+        webView.loadUrl(url);
+        BrowserContainer.add(webView);
+        if (active) showAlbum(webView);
     }
 
     private void initOmnibox() {
@@ -115,42 +140,13 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
             }
             return false;
         });
-
         omniBox_tab.setOnClickListener(v -> showOverview());
-        omnibox_overflow.setOnClickListener(v -> showOverflow());
-    }
-
-    @Override
-    public void showAlbum(AlbumController controller) {
-        if (currentAlbumController != null) currentAlbumController.deactivate();
-
-        // HOPPER LOGIC: If a tab is pinned, it stays rendering in background for the system recorder.
-        if (recordedAlbumController != null && recordedAlbumController != controller) {
-            ((View) recordedAlbumController).setVisibility(View.INVISIBLE);
-        }
-
-        currentAlbumController = controller;
-        ninjaWebView = (NinjaWebView) controller;
-        currentAlbumController.activate();
-        
-        contentFrame.removeAllViews();
-        contentFrame.addView((View) controller);
-        omniBox_text.setText(ninjaWebView.getUrl());
-    }
-
-    public void addAlbum(String title, String url, boolean active) {
-        NinjaWebView webView = new NinjaWebView(this);
-        webView.setBrowserController(this);
-        webView.loadUrl(url);
-        BrowserContainer.add(webView);
-        if (active) showAlbum(webView);
     }
 
     @Override
     public void updateProgress(int progress) {
-        if (progress >= 100) {
-            progressBar.setVisibility(View.GONE);
-        } else {
+        if (progress >= 100) progressBar.setVisibility(View.GONE);
+        else {
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setProgress(progress);
         }
@@ -158,16 +154,13 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
 
     public void showOverview() { overViewLayout.setVisibility(View.VISIBLE); }
     @Override public void hideOverview() { overViewLayout.setVisibility(View.GONE); }
-
-    public void showOverflow() {
-        // Logic to inflate menu_settings.xml or menu_bottom_overflow.xml
-    }
+    public void showOverflow() { /* Menu logic */ }
 
     @Override
     public void onDestroy() {
         BrowserUnit.clearCache(this);
         BrowserUnit.clearCookie();
-        BrowserContainer.clear(); // Wipes all Ghost sessions from memory.
+        BrowserContainer.clear();
         super.onDestroy();
     }
 
