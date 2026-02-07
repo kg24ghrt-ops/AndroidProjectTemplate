@@ -9,6 +9,10 @@
     ".yml": {
       "enabled": false,
       "run": "yaml-language-server --stdio"
+    },
+    ".xml": {
+      "enabled": true,
+      "run": "lemminx"
     }
   }
 }
