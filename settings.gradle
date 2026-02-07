@@ -37,13 +37,9 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
-    versionCatalogs {
-        libs {
-            // Using rootDir ensures that included builds (like android-components)
-            // can find the catalog file in the main project folder.
-            from(files("${rootDir}/gradle/libs.versions.toml"))
-        }
-    }
+    // We removed the manual 'versionCatalogs' block.
+    // Gradle 8.x automatically finds and shares gradle/libs.versions.toml
+    // across all included builds.
 }
 
 ext.topsrcdir = rootProject.projectDir.absolutePath.minus("mobile/android/fenix")
@@ -59,11 +55,16 @@ include ':mozilla-detekt-rules'
 include ':benchmark'
 
 gradle.projectsLoaded { ->
+    // Disables A-C tests and lint when building Fenix.
     gradle.allprojects { project ->
         if (project.projectDir.absolutePath.contains("/android-components/")) {
-            project.tasks.withType(Test).configureEach { enabled = false }
+            project.tasks.withType(Test).configureEach {
+                enabled = false
+            }
             project.tasks.configureEach { task ->
-                if (task.name.contains("lint")) { task.enabled = false }
+                if (task.name.contains("lint")) {
+                    task.enabled = false
+                }
             }
         }
     }
