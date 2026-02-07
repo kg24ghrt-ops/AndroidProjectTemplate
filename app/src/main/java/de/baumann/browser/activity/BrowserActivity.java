@@ -14,7 +14,6 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
@@ -28,7 +27,6 @@ import de.baumann.browser.R;
 import de.baumann.browser.browser.AlbumController;
 import de.baumann.browser.browser.BrowserContainer;
 import de.baumann.browser.browser.BrowserController;
-import de.baumann.browser.unit.BrowserUnit;
 import de.baumann.browser.unit.HelperUnit;
 import de.baumann.browser.view.NinjaWebView;
 
@@ -79,7 +77,13 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
         omniBox_text.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_GO || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                 String url = Objects.requireNonNull(omniBox_text.getText()).toString();
-                ninjaWebView.loadUrl(BrowserUnit.querySearch(activity, url));
+                // Simple logic: if it doesn't have a dot, search Google.
+                if (!url.contains(".")) {
+                    url = "https://www.google.com/search?q=" + url;
+                } else if (!url.startsWith("http")) {
+                    url = "https://" + url;
+                }
+                ninjaWebView.loadUrl(url);
                 omniBox_text.clearFocus();
                 return true;
             }
@@ -118,10 +122,19 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
         }
     }
 
-    // --- COMPATIBILITY STUBS (Keeps the build from crashing) ---
-    public void showOverflow() { /* Chrome menu will go here */ }
-    @Override public void showOverview() { /* Tab switcher will go here */ }
-    @Override public void hideOverview() {}
+    // Removed @Override from methods not in the BrowserController Interface
+    public void showOverview() {
+        View overview = findViewById(R.id.bottomSheetDialog_OverView);
+        if (overview != null) overview.setVisibility(View.VISIBLE);
+    }
+
+    @Override public void hideOverview() {
+        View overview = findViewById(R.id.bottomSheetDialog_OverView);
+        if (overview != null) overview.setVisibility(View.GONE);
+    }
+
+    public void showOverflow() { /* Menu logic */ }
+
     @Override public void removeAlbum(AlbumController controller) {}
     @Override public void showFileChooser(ValueCallback<Uri[]> cb) {}
     @Override public void onShowCustomView(View v, WebChromeClient.CustomViewCallback cb) {}
