@@ -1,0 +1,13 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'kotlin-dsl'
+}
+gradlePlugin {
+    plugins {
+        focusDependenciesPlugin {
+            id = 'mozac.FocusDependenciesPlugin'
+            implementationClass = 'FocusDependenciesPlugin'
+        }
+    }
+}
+repositories { mavenCentral(); google() }

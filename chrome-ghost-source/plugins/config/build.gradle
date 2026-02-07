@@ -1,0 +1,13 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'kotlin-dsl'
+}
+gradlePlugin {
+    plugins {
+        configPlugin {
+            id = 'mozac.ConfigPlugin'
+            implementationClass = 'ConfigPlugin'
+        }
+    }
+}
+repositories { mavenCentral(); google() }
