@@ -1,8 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/chrome_white"
     tools:ignore="ContentDescription">
 
     <FrameLayout
@@ -16,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
-        android:background="?attr/colorSurface"
+        android:background="@color/chrome_white"
         android:divider="@null"
         android:fastScrollEnabled="true"
         android:paddingTop="10dp"
@@ -28,15 +30,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="?attr/actionBarSize"
-        android:background="?attr/colorSurface"
+        android:background="@color/chrome_white"
         android:padding="25dp"
         android:text="@string/main_omnibox_input_hint"
+        android:textColor="@color/chrome_text_dark"
         android:visibility="gone" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorSurface">
+        android:background="@color/chrome_white"
+        app:elevation="2dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -45,7 +49,9 @@
             <RelativeLayout
                 android:id="@+id/omniBox"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_margin="6dp"
+                android:background="@color/chrome_gray_bg">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/omniBox_input"
@@ -60,8 +66,8 @@
                     android:paddingStart="16dp"
                     android:selectAllOnFocus="true"
                     android:singleLine="true"
-                    android:textAppearance="?attr/textAppearanceBodyLarge"
-                    android:textStyle="normal" />
+                    android:textColor="@color/chrome_text_dark"
+                    android:textSize="16sp" />
 
                 <LinearLayout
                     android:id="@+id/omnibox_buttonsView"
@@ -77,8 +83,8 @@
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/icon_profile_standard"
-                        app:tint="?attr/colorOnSurface" />
+                        android:src="@android:drawable/ic_menu_sort_by_size"
+                        app:tint="@color/chrome_text_dark" />
 
                     <ImageButton
                         android:id="@+id/omnibox_overflow"
@@ -86,8 +92,8 @@
                         android:layout_height="48dp"
                         android:layout_gravity="center"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/icon_overflow"
-                        app:tint="?attr/colorOnSurface" />
+                        android:src="@android:drawable/ic_menu_more"
+                        app:tint="@color/chrome_text_dark" />
 
                 </LinearLayout>
 
@@ -99,7 +105,8 @@
                 android:layout_height="3dp"
                 android:layout_alignParentBottom="true"
                 android:indeterminate="true"
-                app:indicatorColor="@color/colorAccent" />
+                android:visibility="gone"
+                app:indicatorColor="@color/chrome_progress_blue" />
 
         </RelativeLayout>
     </com.google.android.material.appbar.AppBarLayout>
@@ -108,7 +115,7 @@
         android:id="@+id/bottomSheetDialog_OverView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/colorSurface"
+        android:background="@color/chrome_white"
         android:visibility="gone">
 
         <ListView
@@ -123,6 +130,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:background="@color/chrome_white"
             app:menu="@menu/menu_bottom_overview" />
     </RelativeLayout>
 
