@@ -245,7 +245,14 @@
     <string name="menu_restart">Restart and reload tabs</string>
     <string name="setting_title_screenOn">Keep screen on</string>
     <string name="setting_title_audioBackground">Play audio on background</string>
-
+    <string name="menu_settings">Settings</string>
+    <string name="setting_title_privacy">Privacy &amp; Security</string>
+    <string name="setting_title_gestures">Gestures</string>
+    <string name="setting_title_filter">Content Filter</string>
+    <string name="setting_title_backup">Backup &amp; Restore</string>
+    <string name="setting_title_ui">User Interface</string>
+    
+  
     <!-- License changelog -->
 
 </resources>
