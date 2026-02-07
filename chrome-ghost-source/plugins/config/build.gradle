@@ -1,7 +1,16 @@
-plugins {
-    id 'java-gradle-plugin'
-    id 'kotlin-dsl'
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24'
+    }
 }
+
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'org.jetbrains.kotlin.jvm'
+
 gradlePlugin {
     plugins {
         configPlugin {
@@ -10,4 +19,11 @@ gradlePlugin {
         }
     }
 }
-repositories { mavenCentral(); google() }
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
+}
