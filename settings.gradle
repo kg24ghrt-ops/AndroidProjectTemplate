@@ -20,10 +20,10 @@ pluginManagement {
         }
     }
 
-    // UPDATED: Pointing to ac-source where files are now physically tracked
-    includeBuild("./ac-source/plugins/publicsuffixlist")
-    includeBuild("./ac-source/plugins/dependencies")
-    includeBuild("./ac-source/plugins/config")
+    // UPDATED: Pointing to chrome-ghost-source where files are now physically tracked
+    includeBuild("./chrome-ghost-source/plugins/publicsuffixlist")
+    includeBuild("./chrome-ghost-source/plugins/dependencies")
+    includeBuild("./chrome-ghost-source/plugins/config")
     includeBuild("./plugins/apksize")
     includeBuild("./plugins/nimbus-gradle-plugin")
 }
@@ -53,9 +53,9 @@ include ':mozilla-detekt-rules'
 include ':benchmark'
 
 gradle.projectsLoaded { ->
-    // UPDATED: Disables tests/lint in the new ac-source path
+    // UPDATED: Disables tests/lint in the new chrome-ghost-source path
     gradle.allprojects { project ->
-        if (project.projectDir.absolutePath.contains("/ac-source/")) {
+        if (project.projectDir.absolutePath.contains("/chrome-ghost-source/")) {
             project.tasks.withType(Test).configureEach { enabled = false }
             project.tasks.configureEach { task ->
                 if (task.name.contains("lint")) { task.enabled = false }
