@@ -1,8 +1,8 @@
 import org.gradle.api.Plugin
-import org.gradle.api.Project
+import org.gradle.api.initialization.Settings
 
-class DependenciesPlugin : Plugin<Project> {
-    override fun apply(project: Project) {
-        // This is a stub to let the build pass initialization
+class DependenciesPlugin : Plugin<Settings> {
+    override fun apply(settings: Settings) {
+        // Stub for settings-level plugin
     }
 }
