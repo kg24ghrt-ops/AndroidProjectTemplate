@@ -78,3 +78,4 @@ def projectLocalProperties = file("local.properties").with { localPropertiesFile
 projectLocalProperties.each { prop ->
     gradle.ext."localProperties.${prop.key}" = prop.value
 }
+ 
