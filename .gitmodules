@@ -1,5 +1,0 @@
-[submodule "android-components"]
-path = android-components
-url = https://github.com/mozilla-mobile/android-components.git
-branch = main
-update = checkout
