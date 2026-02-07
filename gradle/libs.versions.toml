@@ -284,3 +284,10 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 python-envs-plugin = {id = "com.jetbrains.python.envs", version.ref = "python-envs-plugin"}
 protobuf-plugin = {id = "com.google.protobuf", version.ref = "protobuf-plugin"}
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+
+[libraries]
+android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version = "8.7.3" }
+androidx-benchmark-gradle = { group = "androidx.benchmark", name = "benchmark-gradle-plugin", version = "1.2.4" }
+androidx-navigation-safeargs = { group = "androidx.navigation", name = "navigation-safe-args-gradle-plugin", version = "2.7.7" }
+mozilla-glean-gradle-plugin = { group = "org.mozilla.telemetry", name = "glean-gradle-plugin", version = "61.1.0" }
+osslicenses-plugin = { group = "com.google.android.gms", name = "oss-licenses-plugin", version = "0.10.6" }
