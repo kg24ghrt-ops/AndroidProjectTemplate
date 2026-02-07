@@ -1,5 +1,12 @@
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-class FocusDependenciesPlugin : Plugin<Project> {
-    override fun apply(project: Project) {}
+import org.gradle.api.initialization.Settings
+
+class FocusDependenciesPlugin : Plugin<Any> {
+    override fun apply(target: Any) {
+        when (target) {
+            is Settings -> {}
+            is Project -> {}
+        }
+    }
 }
