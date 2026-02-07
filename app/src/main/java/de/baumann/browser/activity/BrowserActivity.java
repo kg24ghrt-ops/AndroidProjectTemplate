@@ -7,8 +7,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -16,7 +14,6 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -44,7 +41,6 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
     private ImageButton omnibox_overflow;
     private NinjaWebView ninjaWebView;
     private AlbumController currentAlbumController = null;
-    
     private SharedPreferences sp;
     private Activity activity;
     private Context context;
@@ -52,22 +48,20 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
         activity = this;
         context = this;
         sp = PreferenceManager.getDefaultSharedPreferences(context);
 
-        // UI Setup - Chrome Ghost Branding
         HelperUnit.initTheme(activity);
         if (getSupportActionBar() != null) getSupportActionBar().hide();
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.chrome_white));
+        
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
 
         setContentView(R.layout.activity_main);
 
-        // Bind Chrome Ghost Views
         contentFrame = findViewById(R.id.main_content);
         omniBox_text = findViewById(R.id.omniBox_input);
         omniBox_tab = findViewById(R.id.omniBox_tab);
@@ -76,7 +70,6 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
 
         initChromeOmnibox();
 
-        // Start with default page
         if (BrowserContainer.size() < 1) {
             addAlbum("Google", "https://www.google.com", true);
         }
@@ -101,10 +94,7 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
         NinjaWebView webView = new NinjaWebView(context);
         webView.setBrowserController(this);
         webView.loadUrl(url);
-        
-        if (active) {
-            showAlbum(webView);
-        }
+        if (active) showAlbum(webView);
     }
 
     @Override
@@ -113,10 +103,8 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
         currentAlbumController = controller;
         ninjaWebView = (NinjaWebView) controller;
         currentAlbumController.activate();
-        
         contentFrame.removeAllViews();
         contentFrame.addView((View) controller);
-        
         omniBox_text.setText(ninjaWebView.getUrl());
     }
 
@@ -130,11 +118,13 @@ public class BrowserActivity extends AppCompatActivity implements BrowserControl
         }
     }
 
-    @Override public void removeAlbum(AlbumController controller) { /* Implementation */ }
-    @Override public void showOverview() { /* Link to your OverView relativeLayout */ }
-    @Override public void hideOverview() { /* Implementation */ }
-    @Override public void showFileChooser(ValueCallback<Uri[]> cb) { /* Implementation */ }
+    // --- COMPATIBILITY STUBS (Keeps the build from crashing) ---
+    public void showOverflow() { /* Chrome menu will go here */ }
+    @Override public void showOverview() { /* Tab switcher will go here */ }
+    @Override public void hideOverview() {}
+    @Override public void removeAlbum(AlbumController controller) {}
+    @Override public void showFileChooser(ValueCallback<Uri[]> cb) {}
     @Override public void onShowCustomView(View v, WebChromeClient.CustomViewCallback cb) {}
     @Override public void onHideCustomView() {}
-    @Override public Bitmap favicon() { return ninjaWebView.getFavicon(); }
+    @Override public Bitmap favicon() { return (ninjaWebView != null) ? ninjaWebView.getFavicon() : null; }
 }
