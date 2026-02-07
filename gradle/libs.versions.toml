@@ -4,6 +4,8 @@ glean = "61.1.0"
 android-gradle = "8.7.3"
 
 [libraries]
+android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version = "8.7.3" }
+mozilla-glean-gradle-plugin = { group = "org.mozilla.telemetry", name = "glean-gradle-plugin", version = "61.1.0" }
 # These MUST exist for your build.gradle line 15-20
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "android-gradle" }
 androidx-benchmark-gradle = { group = "androidx.benchmark", name = "benchmark-gradle-plugin", version = "1.2.4" }
@@ -16,6 +18,3 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version = "1.9.24-1.0.20" }
 
-# --- CHROME-GHOST CUSTOM ADDITIONS ---
-android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version = "8.7.3" }
-mozilla-glean-gradle-plugin = { group = "org.mozilla.telemetry", name = "glean-gradle-plugin", version = "61.1.0" }
