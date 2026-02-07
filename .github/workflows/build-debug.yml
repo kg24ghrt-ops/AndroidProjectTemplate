@@ -11,14 +11,15 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - name: Checkout repo (full depth)
       - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Force Clone Android Components
         run: |
+          # Remove the 'pointer' folder and replace it with real code
           rm -rf android-components
           git clone --depth 1 https://github.com/mozilla-mobile/android-components.git android-components
+          # This pulls the nested plugins Gradle is looking for
           cd android-components && git submodule update --init --recursive
 
       - name: Set up JDK 17
@@ -32,45 +33,21 @@ jobs:
 
       - name: Verify version catalog exists
         run: |
-          echo "Checking version catalog..."
           if [ -f gradle/libs.versions.toml ]; then
             echo "Found libs.versions.toml"
           else
             echo "ERROR: gradle/libs.versions.toml not found"
-            ls -la
             exit 1
           fi
-
-      - name: Install specific SDK components
-        run: |
-          # Use the pre-installed sdkmanager to get specific versions
-          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
-
-      - name: Gradle cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-
 
       - name: Grant execute permission for Gradle
         run: chmod +x ./gradlew
 
-      - name: Assemble Debug (no strict checks)
-        run: ./gradlew assembleDebug -x lint -x detekt -x ktlint --no-daemon --stacktrace --info
+      - name: Assemble Debug
+        run: ./gradlew assembleDebug -x lint -x detekt -x ktlint --no-daemon --stacktrace
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
           name: debug-apk
           path: "**/build/outputs/apk/debug/*.apk"
-
-      - name: Upload Gradle problem reports (if any)
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gradle-problems
-          path: "**/build/reports/"
