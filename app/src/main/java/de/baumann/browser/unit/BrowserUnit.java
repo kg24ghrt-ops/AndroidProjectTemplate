@@ -1,20 +1,15 @@
 package de.baumann.browser.unit;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.WebView;
-import androidx.preference.PreferenceManager;
 import java.io.File;
 import java.util.Locale;
-import java.util.Objects;
-import de.baumann.browser.R;
 
 public class BrowserUnit {
 
@@ -46,9 +41,22 @@ public class BrowserUnit {
 
     public static void clearCookie() {
         CookieManager.getInstance().removeAllCookies(null);
+        CookieManager.getInstance().flush();
     }
 
-    public static void clearHistory(Context context) { /* Database logic here */ }
+    public static void clearBookmark(Context context) {
+        de.baumann.browser.database.RecordAction action = new de.baumann.browser.database.RecordAction(context);
+        action.open(true);
+        action.clearTable(de.baumann.browser.unit.RecordUnit.TABLE_BOOKMARK);
+        action.close();
+    }
+
+    public static void clearHistory(Context context) {
+        de.baumann.browser.database.RecordAction action = new de.baumann.browser.database.RecordAction(context);
+        action.open(true);
+        action.clearTable(de.baumann.browser.unit.RecordUnit.TABLE_HISTORY);
+        action.close();
+    }
 
     public static void clearIndexedDB(Context context) {
         File data = new File(Environment.getDataDirectory(), "//data//" + context.getPackageName() + "//app_webview");
@@ -61,19 +69,18 @@ public class BrowserUnit {
     }
 
     public static String redirectURL(WebView view, SharedPreferences sp, String url) {
-        return url; // Simplified for now
+        return url; 
     }
 
     public static boolean deleteDir(File dir) {
         if (dir != null && dir.isDirectory()) {
             String[] children = dir.list();
-            for (String child : children) {
-                if (!deleteDir(new File(dir, child))) return false;
+            if (children != null) {
+                for (String child : children) {
+                    if (!deleteDir(new File(dir, child))) return false;
+                }
             }
         }
         return dir != null && dir.delete();
     }
 }
-
-
-
