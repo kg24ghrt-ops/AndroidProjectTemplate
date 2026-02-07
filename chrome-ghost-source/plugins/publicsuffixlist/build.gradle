@@ -9,35 +9,20 @@ buildscript {
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'org.jetbrains.kotlin.android'
 
 android {
-    // We provide both the old and new names to be safe during evaluation
+    // We are putting this everywhere to force AGP to see it
+    compileSdkVersion 35
     compileSdk 35
-    compileSdkVersion 35 
     
     namespace 'mozilla.components.lib.publicsuffixlist'
     
     defaultConfig {
         minSdk 21
-        targetSdk 35
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-    
-    kotlinOptions {
-        jvmTarget = '11'
     }
 }
 
 repositories {
     google()
     mavenCentral()
-}
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
 }
