@@ -1,28 +1,28 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.7.3'
-    }
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
 }
 
-apply plugin: 'com.android.library'
-
 android {
-    // We are putting this everywhere to force AGP to see it
-    compileSdkVersion 35
-    compileSdk 35
-    
     namespace 'mozilla.components.lib.publicsuffixlist'
+    compileSdk 35
     
     defaultConfig {
         minSdk 21
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 }
 
 repositories {
     google()
     mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.24"
 }
