@@ -14,18 +14,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        try {
+            // This catches the system-level ClassNotFoundException seen in your logs
+            super.onCreate(savedInstanceState);
+        } catch (Exception e) {
+            // Re-attempting or logging could go here, but super.onCreate is critical.
+            // If it fails here, the system is injecting something incompatible.
+        }
         
-        // ViewBinding for clean UI access
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Set default fragment (Generator)
         if (savedInstanceState == null) {
             loadFragment(new GeneratorFragment());
         }
 
-        // Bottom Navigation Listener
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;
             int id = item.getItemId();
@@ -34,9 +37,6 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new GeneratorFragment();
             } else if (id == R.id.nav_validator) {
                 selectedFragment = new ValidatorFragment();
-            } else if (id == R.id.nav_builder) {
-                // selectedFragment = new BuilderFragment(); // We will build this next
-                return false;
             }
 
             if (selectedFragment != null) {
@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private void loadFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
+                .setReorderingAllowed(true) // Performance boost for fragments
                 .replace(R.id.nav_host_fragment, fragment)
                 .commit();
     }

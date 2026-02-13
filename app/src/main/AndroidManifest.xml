@@ -13,10 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MinecraftStudio"
         tools:targetApi="31">
-        <activity
+        <activity android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" android:exported="true" android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:name=".ExampleActivity"
             android:exported="false" />
-        <activity
+        <activity android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" android:exported="true" android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
