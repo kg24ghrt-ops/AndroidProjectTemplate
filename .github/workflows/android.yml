@@ -22,7 +22,7 @@ jobs:
         cache: gradle
 
     - name: Grant Execute Permission for Gradlew
-        run: chmod +x gradlew
+      run: chmod +x gradlew
 
     - name: Build Debug APK
       run: ./gradlew assembleDebug
@@ -32,4 +32,3 @@ jobs:
       with:
         name: app-debug
         path: app/build/outputs/apk/debug/app-debug.apk
-        
