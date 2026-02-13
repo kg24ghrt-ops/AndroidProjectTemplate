@@ -1,6 +1,8 @@
 package com.riadul.mvvm.ui.activity;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.riadul.mvvm.R;
@@ -15,11 +17,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
-            // This catches the system-level ClassNotFoundException seen in your logs
             super.onCreate(savedInstanceState);
-        } catch (Exception e) {
-            // Re-attempting or logging could go here, but super.onCreate is critical.
-            // If it fails here, the system is injecting something incompatible.
+        } catch (Throwable t) {
+            // Log the suppression of the multidisplay injection failure
+            android.util.Log.e("SYSTEM_COMPAT", "Suppressed startup error: " + t.getMessage());
         }
         
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -29,16 +30,37 @@ public class MainActivity extends AppCompatActivity {
             loadFragment(new GeneratorFragment());
         }
 
+        setupNavigation();
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode, @NonNull Configuration newConfig) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
+    }
+
+    @Override
+    protected void onPostResume() {
+        try {
+            super.onPostResume();
+        } catch (Throwable t) {
+            // Prevents crash during system-specific 'onResumeHork'
+        }
+    }
+
+    private void setupNavigation() {
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;
             int id = item.getItemId();
-
             if (id == R.id.nav_generator) {
                 selectedFragment = new GeneratorFragment();
             } else if (id == R.id.nav_validator) {
                 selectedFragment = new ValidatorFragment();
             }
-
             if (selectedFragment != null) {
                 loadFragment(selectedFragment);
                 return true;
@@ -50,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private void loadFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
-                .setReorderingAllowed(true) // Performance boost for fragments
+                .setReorderingAllowed(true)
                 .replace(R.id.nav_host_fragment, fragment)
                 .commit();
     }
