@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MinecraftStudio">
         
-        <activity android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize" android:hardwareAccelerated="true"
+        <activity
             android:name=".ui.activity.MainActivity"
             android:exported="true"
             android:hardwareAccelerated="true"
