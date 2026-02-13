@@ -3,15 +3,14 @@ plugins {
 }
 
 android {
-    // Required for AGP 8.0+
-    namespace 'com.kg24ghrt.mcstudio' 
+    // This MUST match the package name in your Java files
+    namespace 'com.riadul.mvvm' 
     
-    // Updated to latest stable for Material 3 support
     compileSdk 34 
 
     defaultConfig {
-        applicationId "com.kg24ghrt.mcstudio"
-        minSdk 24 // Your requirement
+        applicationId "com.riadul.mvvm"
+        minSdk 24
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -27,12 +26,12 @@ android {
     }
 
     compileOptions {
-        // Setting toolchain compatibility
+        // Essential for modern Java support on Android
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_17 
         targetCompatibility JavaVersion.VERSION_17
     }
     
-    // Allow Java 23 features if available in the environment
     java {
         toolchain {
             languageVersion = JavaLanguageVersion.of(23)
@@ -40,26 +39,25 @@ android {
     }
 
     buildFeatures {
-        viewBinding true  // Essential for modern MVVM
+        viewBinding true  
         buildConfig true
     }
 }
 
 dependencies {
-    // Material 3 & Core UI
+    // Desugaring for Java 17+ features on Android 7.0
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+
+    // Material 3
     implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'com.google.android.material:material:1.12.0' // Material 3
+    implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
 
-    // Minecraft Studio Essentials
+    // Minecraft Studio Core Libraries
     implementation 'com.google.code.gson:gson:2.11.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
-    
-    // File handling for .mcaddon (Zip/Unzip)
     implementation 'org.apache.commons:commons-compress:1.26.1'
 
-    // PaperDB (Keeping from your snippet for simple storage)
+    // Original Boilerplate persistence
     implementation 'io.github.pilgr:paperdb:2.7.2'
 
     // Testing
