@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_generator"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@android:drawable/ic_input_add"
         android:title="Generator" />
     <item
         android:id="@+id/nav_validator"
-        android:icon="@android:drawable/ic_menu_manage"
+        android:icon="@android:drawable/ic_menu_preferences"
         android:title="Validator" />
     <item
         android:id="@+id/nav_builder"
