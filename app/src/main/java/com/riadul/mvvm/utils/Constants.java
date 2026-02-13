@@ -7,7 +7,6 @@ public class Constants {
 
     public static final String BASE_URL = "https://www.example.com/";
 
-
     public static ApiService getApiService(){
         return ApiClient.getClient(BASE_URL).create(ApiService.class);
     }

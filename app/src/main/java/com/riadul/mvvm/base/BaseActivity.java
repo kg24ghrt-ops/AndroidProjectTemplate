@@ -11,7 +11,6 @@ import com.riadul.mvvm.utils.Constants;
 
 import io.paperdb.Paper;
 
-
 public class BaseActivity extends AppCompatActivity {
 
     public BaseApplication mInstance;

@@ -7,12 +7,10 @@ import androidx.multidex.MultiDexApplication;
 
 import io.paperdb.Paper;
 
-
 public class BaseApplication extends MultiDexApplication {
     private static BaseApplication mInstance = null;
     public AppStorage appStorage;
     private static Context mAppContext;
-
 
     @Override
     protected void attachBaseContext(Context base) {

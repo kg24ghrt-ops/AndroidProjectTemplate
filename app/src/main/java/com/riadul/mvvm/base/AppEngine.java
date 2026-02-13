@@ -1,6 +1,5 @@
 package com.riadul.mvvm.base;
 
-
 /**
  * Created by Team Webxzen.
  * Disclaimer: IMPORTANT:  This software is supplied to you by Webxzen Labs
