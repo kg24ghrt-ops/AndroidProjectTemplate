@@ -18,7 +18,7 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      # 1. Look for an existing keystore in the GitHub Cache
+      # 1. Try to restore the keystore from the GitHub Cache
       - name: Restore Keystore Cache
         id: cache-keystore
         uses: actions/cache@v4
@@ -26,17 +26,16 @@ jobs:
           path: app/antonio-release.jks
           key: ${{ runner.os }}-antonio-keystore-v1
 
-      # 2. Only run this if the cache was NOT found (First time only)
-      - name: Generate Fresh Keystore (First Run Only)
+      # 2. Generate key ONLY if cache is empty. Note: Single line prevents "Illegal Option" errors.
+      - name: Generate Fresh Keystore (If Cache Miss)
         if: steps.cache-keystore.outputs.cache-hit != 'true'
         run: |
-          keytool -genkey -v -keystore app/antonio-release.jks \
-          -alias ${{ secrets.KEY_ALIAS }} \
-          -keyalg RSA -keysize 2048 -validity 10000 \
-          -storepass ${{ secrets.KEYSTORE_PASSWORD }} \
-          -keypass ${{ secrets.KEY_PASSWORD }} \
-          -dname "CN=Antonio, OU=Dev, O=MoweApp, L=City, S=State, C=US"
+          keytool -genkeypair -v -keystore app/antonio-release.jks -alias "${{ secrets.KEY_ALIAS }}" -keyalg RSA -keysize 2048 -validity 10000 -storepass "${{ secrets.KEYSTORE_PASSWORD }}" -keypass "${{ secrets.KEY_PASSWORD }}" -dname "CN=Antonio, OU=Dev, O=MoweApp, L=City, S=State, C=US"
 
+      - name: Grant execute permission
+        run: chmod +x gradlew
+
+      # 3. Build the App with the auto-incrementing version
       - name: Build Release APK
         run: ./gradlew assembleRelease --no-daemon -PversionCode=${{ github.run_number }} -PversionName="1.0.${{ github.run_number }}"
         env:
@@ -45,16 +44,19 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEYSTORE_PATH: "antonio-release.jks"
 
-      # 3. Upload the APK
+      # 4. Upload the finished App
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
           name: Antonio-Build-${{ github.run_number }}
           path: app/build/outputs/apk/release/app-release.apk
 
-      # 4. Backup the Key as an Artifact (so you can download it to your PC)
-      - name: Backup Keystore to Artifacts
+      # 5. Backup the Key file so you can save it locally
+      - name: Backup Keystore File
         uses: actions/upload-artifact@v4
         with:
-          name: Antonio-Manual-Key-Backup
+          name: Antonio-Key-Backup
           path: app/antonio-release.jks
+
+          
+          
