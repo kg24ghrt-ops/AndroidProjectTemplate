@@ -1,4 +1,4 @@
-package __PACKAGE_NAME__
+package com.moweapp. Antonio
 
 import org.junit.Test
 
