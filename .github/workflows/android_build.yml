@@ -18,7 +18,6 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      # 1. Decode your actual master key that you uploaded via mobile terminal
       - name: Decode Master Keystore
         run: |
           mkdir -p app
@@ -27,7 +26,6 @@ jobs:
       - name: Grant execute permission
         run: chmod +x gradlew
 
-      # 2. Build the App with the auto-incrementing version
       - name: Build Release APK
         run: ./gradlew assembleRelease --no-daemon -PversionCode=${{ github.run_number }} -PversionName="1.0.${{ github.run_number }}"
         env:
@@ -36,10 +34,10 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEYSTORE_PATH: "antonio-release.jks"
 
-      # 3. Upload the finished APK
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
           name: Antonio-App-Build-${{ github.run_number }}
-          path: app/build/output/apk/release/app-release.apk
+          path: app/build/outputs/apk/release/app-release.apk
+
           
