@@ -16,28 +16,48 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
+      # STEP 1: INSTALL THE GRADLE ENGINE
+      - name: Setup Gradle 8.10.2
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          gradle-version: 8.10.2
+
+      # STEP 2: REGENERATE THE WRAPPER (This replaces the 44-byte ghost)
+      - name: Generate Fresh Wrapper
+        run: |
+          echo "Force-installing fresh Gradle wrapper files..."
+          gradle wrapper
+          chmod +x gradlew
+
+      # STEP 3: SECURITY & KEYSTORE
       - name: Decode Master Keystore
         run: |
-          # We decode it directly into the app folder where the build runs
+          mkdir -p app
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > app/antonio-release.jks
 
-      - name: Grant execute permission
-        run: chmod +x gradlew
-
+      # STEP 4: THE BUILD
       - name: Build Release APK
         run: ./gradlew assembleRelease --no-daemon
         env:
-          # Make sure these names match what you typed in the 'gh secret set' commands!
           RELEASE_STORE_FILE: antonio-release.jks
           RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
           RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
 
+      # STEP 5: SAVE THE APK
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
           name: Antonio-App-Build-${{ github.run_number }}
-          # Verify this path matches your project structure
           path: app/build/outputs/apk/release/*.apk 
+
+      # STEP 6: SAVE THE FIXED WRAPPER FOR YOU TO DOWNLOAD
+      - name: Export Fixed Wrapper for Phone
+        uses: actions/upload-artifact@v4
+        with:
+          name: fixed-gradle-wrapper
+          path: |
+            gradle/wrapper/gradle-wrapper.jar
+            gradle/wrapper/gradle-wrapper.properties
+            gradlew
